@@ -1,20 +1,22 @@
 import numpy as np
 import math
 import matplotlib.pyplot as plt
+import random
+import timeit
 def generate(d=100,nt=20,N=10000,sigma=0):
     X=np.empty((N,nt,d), dtype = float, order = 'C')
     for i in range(N):
         theta=np.random.rand(d)
         theta=theta/np.linalg.norm(theta,2)*np.sqrt(d)
+        # In Philippe's paper, ||theta||_2==1
+        # But the 2-norm is proportional to sqrt(d), weird
+        # Philippe's paper use Cd, d isn't important. times np.sqrt(d)。
         for j in range(nt):
             l=np.random.randint(d)
             for k in range(d):
                 X[i,j,k]=theta[(k+l)%d]+sigma*np.random.normal()
     return X
 def generate_smooth(d=100,nt=20,N=10000,ne=10,sigma=0):
-    PI=math.pi
-    sin=math.sin
-    cos=math.cos
     # We hope the data to be smooth
     # But it's not essential, just for human beings to feel what's happening
     # We expect a set of functions $f_i(x)$ defined on S1
@@ -25,9 +27,9 @@ def generate_smooth(d=100,nt=20,N=10000,ne=10,sigma=0):
     # d is the length of the signal, \theta\in\mathbb{R}^d
     def f(n,x):
         if n%2==0:
-            return cos(n/2*x/d*2*PI)
+            return math.cos(n/2*x/d*2*math.pi)
         else:
-            return sin((n+1)/2*x/d*2*PI)
+            return math.sin((n+1)/2*x/d*2*math.pi)
     # While we don't like perodic
     def g(n,x):
         return sum([f(k,x)/(k+1) for k in range(n+1)])
@@ -57,6 +59,28 @@ def generate_smooth(d=100,nt=20,N=10000,ne=10,sigma=0):
                 X[i,j,k]=theta[(k+l)%d]+sigma*np.random.normal()
     return X
 
+def generate_smooth_no_replacement(d=100,nt=20,N=10000,ne=10,sigma=0):
+    def f(n,x):
+        if n%2==0:
+            return math.cos(n/2*x/d*2*math.pi)
+        else:
+            return math.sin((n+1)/2*x/d*2*math.pi)
+    def g(n,x):
+        return sum([f(k,x)/(k+1) for k in range(n+1)])
+    X=np.empty((N,nt,d), dtype = float, order = 'C')
+    ne=10
+    for i in range(N):
+        e=np.random.randint(ne)
+        theta=[g(e,k) for k in range(d)]
+        theta=theta/np.linalg.norm(theta,2)*np.sqrt(d)
+        # By no replacement, mean that l should be different
+        # This is not essential?
+        l=random.sample(range(d),nt)
+        for j in range(nt):
+            for k in range(d):
+                X[i,j,k]=theta[(k+l[j])%d]+sigma*np.random.normal()
+    return X
+
 ##### Test #####
 def test():
     X=generate_smooth(100,20,1000,10,0.01)
@@ -64,5 +88,6 @@ def test():
         plt.plot(range(100),X[0,j,:],label='%d'%j)
     plt.legend()
     plt.show()
-test()
+t = timeit.Timer("test()","from __main__ import test")
+print(t.timeit(number=1))
 ##### Correct #####
