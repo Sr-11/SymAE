@@ -7,10 +7,6 @@ def generate(d=100,nt=20,N=10000,sigma=0):
     X=np.empty((N,nt,d), dtype = float, order = 'C')
     for i in range(N):
         theta=np.random.rand(d)
-        theta=theta/np.linalg.norm(theta,2)*np.sqrt(d)
-        # In Philippe's paper, ||theta||_2==1
-        # But the 2-norm is proportional to sqrt(d), weird
-        # Philippe's paper use Cd, d isn't important. times np.sqrt(d)。
         for j in range(nt):
             l=np.random.randint(d)
             for k in range(d):
@@ -45,8 +41,7 @@ def generate_smooth(d=100,nt=20,N=10000,ne=10,sigma=0):
     # D is a n_msmt * n_e block "matrix", where each block is d*1
     # Ok, D is a 3-dimensional tensor?
     # No, won't construct D. D is like a Sample Space.
-    # What's the shape of X in Pawan???
-    # X.shape=(nX,nt,k)=(N,nt,d)
+    # What's the shape of X in Pawan: X.shape=(nX,nt,k)=(N,nt,d)
     X=np.empty((N,nt,d), dtype = float, order = 'C')
     ne=10 # Only use g0,g1...g9
     for i in range(N):
@@ -54,7 +49,7 @@ def generate_smooth(d=100,nt=20,N=10000,ne=10,sigma=0):
         theta=[g(e,k) for k in range(d)]
         theta=theta/np.linalg.norm(theta,2)*np.sqrt(d)
         for j in range(nt):
-            l=np.random.randint(d) # move to the left
+            l=np.random.randint(d) # move left
             for k in range(d):
                 X[i,j,k]=theta[(k+l)%d]+sigma*np.random.normal()
     return X
@@ -72,10 +67,8 @@ def generate_smooth_no_replacement(d=100,nt=20,N=10000,ne=10,sigma=0):
     for i in range(N):
         e=np.random.randint(ne)
         theta=[g(e,k) for k in range(d)]
-        theta=theta/np.linalg.norm(theta,2)*np.sqrt(d)
-        # By no replacement, mean that l should be different
-        # This is not essential?
         l=random.sample(range(d),nt)
+        # By no replacement, mean that l should be different
         for j in range(nt):
             for k in range(d):
                 X[i,j,k]=theta[(k+l[j])%d]+sigma*np.random.normal()
