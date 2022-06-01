@@ -47,7 +47,6 @@ def generate_smooth(d=100,nt=20,N=10000,ne=10,sigma=0):
     for i in range(N):
         e=np.random.randint(ne)
         theta=[g(e,k) for k in range(d)]
-        theta=theta/np.linalg.norm(theta,2)*np.sqrt(d)
         for j in range(nt):
             l=np.random.randint(d) # move left
             for k in range(d):
