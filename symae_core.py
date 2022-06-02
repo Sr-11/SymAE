@@ -18,7 +18,7 @@ class Downsampler(tf.keras.Model):
   def __init__(self, kernel_sizes, filters, fact=4):
     super(Downsampler, self).__init__(name='')
     k1,k2=kernel_sizes
-
+    #def elu(z,alpha): return z if z >= 0 else alpha*(e^z -1), where default alpha=1.0
     self.conv1 = tfkltd(tfkl.Conv2D(filters, (k1,k2),padding='same',activation='elu',name='conv1'))
     self.conv2 = tfkltd(tfkl.Conv2D(filters, (k1,k2),padding='same',activation='elu',name='conv2'))
     self.mp = tfkltd(tfkl.MaxPool2D(pool_size=(1,fact)))
@@ -237,7 +237,6 @@ class SymmetricEncoder1D(tf.keras.Model):
     self.c14=tfkltd(tfkl.Conv1D(filters//fstep[2],(k1),padding='same',activation='elu'))
     self.mp12=tfkltd(tfkl.MaxPool1D(pool_size=(tdown[1])))
 
-
     self.c21=tfkl.Conv1D(filters,(k1),padding='same',activation='elu')
     self.c22=tfkl.Conv1D(filters//fstep[0],(k1),padding='same',activation='elu')
     self.mp21=tfkl.MaxPool1D(pool_size=(tdown[2]))
@@ -354,12 +353,6 @@ class DroppedLatentCat(tf.keras.Model):
     z=tf.pad(zsym,paddings=[[0,0],[0,self.len]])
     return z
 
-
-
-
-
-
-
 class Mixer(tf.keras.Model):
   def __init__(self, kernel_sizes, filters, upfacts, nt, nr, fstep=[8,4,2]):
     super(Mixer, self).__init__(name='')
@@ -464,7 +457,6 @@ class MixerDense1D(tf.keras.Model):
   def model(self, x):
     return tfk.Model(inputs=x, outputs=self.call(x))
 
-
 class Upsampler(tf.keras.Model):
   def __init__(self, kernel_sizes, filters, fact=4):
     super(Upsampler, self).__init__(name='')
@@ -503,8 +495,5 @@ class UpsamplerDense(tf.keras.Model):
     x=self.d2(x)
     out=tfkl.Reshape(target_shape=((ntau,nr,self.nt_out,1)))(x)
     return out
-
 #
-
-
 # %%
