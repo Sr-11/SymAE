@@ -80,6 +80,6 @@ def test():
         plt.plot(range(100),X[0,j,:],label='%d'%j)
     plt.legend()
     plt.show()
-t = timeit.Timer("test()","from __main__ import test")
-print(t.timeit(number=1))
+#t = timeit.Timer("test()","from __main__ import test")
+#print(t.timeit(number=1))
 ##### Correct #####
