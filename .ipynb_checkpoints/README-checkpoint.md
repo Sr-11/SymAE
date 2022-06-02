@@ -1,3 +1,5 @@
+![Alt text](symae.png?raw=true "Title")  
+
 # SymAE+MRA    
 Generating MRA data: src/generate.py    
 ## How to write code on the server:   
@@ -26,7 +28,8 @@ git pull = git fetch + git merge
 ## How to transport files using SSH?  
 scp /Users/sunrui/Desktop/symae.png eruisun@wave1.mit.edu:/math/home/eruisun     
 # Question:      
-1. Why "Num GPUs Available:  0" ? Wave3 is supposed to have 1 gpu. Run on wave3, see src/main.ipynb    
+1. Why "Num GPUs Available:  0" ? Wave3 is supposed to have 1 gpu. Run on wave3, see src/main.ipynb   
+(Solved, 7a has 2 gpus)
 2. I can't use wave1.mit.edu ?    
 (base) sunrui@dhcp-10-31-48-146 ~ % ssh -XC eruisun@wave1.mit.edu    
 kex_exchange_identification: read: Connection reset by peer    
@@ -37,5 +40,3 @@ I can't see where is the structure of SymAE?
 So we need to construct SymAE by hand?   
 (Solved, reading Brindha's code)   
 __________________________________________________________________
-
-![Alt text](symae.png?raw=true "Title")  

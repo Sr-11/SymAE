@@ -57,9 +57,6 @@ class DownsamplerDense(tf.keras.Model):
     out=self.bn(x, training=training)
     return out
 
-
-
-
 class NuisanceEncoder(tf.keras.Model):
   def __init__(self, kernel_sizes, filters, rdown=[2,2,1,1], tdown=[1,1,2,2], fstep=[2,4,8], latent_dim=512):
     super(NuisanceEncoder, self).__init__(name='')
@@ -229,7 +226,6 @@ class SymmetricEncoder1D(tf.keras.Model):
   def __init__(self, kernel_size, filters, fstep=[2,4,8], tdown=[2,4,4,4],latent_dim=8):
     super(SymmetricEncoder1D, self).__init__(name='')
     k1=kernel_size
-
     self.c11=tfkltd(tfkl.Conv1D(filters,(k1),padding='same',activation='elu'))
     self.c12=tfkltd(tfkl.Conv1D(filters//fstep[0],(k1),padding='same',activation='elu'))
     self.mp11=tfkltd(tfkl.MaxPool1D(pool_size=(tdown[0])))
