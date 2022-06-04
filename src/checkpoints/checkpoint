@@ -1,0 +1,2 @@
+model_checkpoint_path: "ID=1,sigma=0.0,epochs=1000,p=8,q=22,date=06-03-2022--13-56-26"
+all_model_checkpoint_paths: "ID=1,sigma=0.0,epochs=1000,p=8,q=22,date=06-03-2022--13-56-26"
