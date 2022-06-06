@@ -30,7 +30,11 @@ class MRA_generate():
         thetas : numpy.ndarray
             theta.shape=(N,d)
         shifts : numpy.ndarray
-            shifts.shapr=(N,nt)
+            shifts.shape=(N,nt)
+        states : numpy.ndarray
+            states.shape=(N,)
+            states is used to mark how many different states are in X
+            doesn't have uniform format
         '''
         self.d=d
         self.nt=nt
@@ -41,6 +45,7 @@ class MRA_generate():
         self.SNR=np.empty(N)
         self.thetas=np.empty((N,d), dtype = float, order = 'C')
         self.shifts=np.empty((N,nt), dtype = float, order = 'C')
+        self.states=np.empty(N, dtype = int)
     def generate_random(self):
         '''
         Generate a Multireference Alignment (MRA) data set X. 
@@ -72,6 +77,7 @@ class MRA_generate():
             return math.cos(n*x/d*2*math.pi)
         for i in range(N):
             e=np.random.randint(ne)
+            self.states[i]=e
             thetas[i,:]=[f(e,k) for k in range(d)]
             if sigma!=0:
                 SNR[i]=(np.linalg.norm(thetas[i,:],2)/sigma)**2
@@ -102,6 +108,7 @@ class MRA_generate():
             return sum([f(k,x)/(k+1) for k in range(n+1)])
         for i in range(N):
             e=np.random.randint(ne)
+            self.states[i]=e
             thetas[i,:]=[g(e,k) for k in range(d)]
             if sigma!=0:
                 SNR[i]=(np.linalg.norm(thetas[i,:],2)/sigma)**2
@@ -134,6 +141,7 @@ class MRA_generate():
             return sum([f(k,x)/(k+1) for k in range(n+1)])
         for i in range(N):
             e=np.random.randint(ne)
+            self.states[i]=e
             thetas[i,:]=[g(e,k) for k in range(d)]
             if sigma!=0:
                 SNR[i]=(np.linalg.norm(thetas[i,:],2)/sigma)**2
