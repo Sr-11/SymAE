@@ -3,185 +3,145 @@ import math
 import matplotlib.pyplot as plt
 import random
 import timeit
-def generate_random(d=100,nt=20,N=10000,sigma=0,ne=20):
-    '''
-    Generate a Multireference Alignment (MRA) data set X. 
-    X[i,j,:] is the j-th instance of the i-th data. 
-    The value X[i,j,k] randomly samples from a uniform distribution over [0, 1).
-    X[i,j,k]~U(0,1)+noise, iid, where k=1,2...d (given 1<=i<=N and 1<=j<=nt).
-    See meaning of N, nt, d below.
-    
-    Parameters
-    ----------
-    d : int
-        The dimensions of each instance, say d=dim Xi[j] (e.g. d=28*28 for mnist).
-    nt : int
-        The number of instances in each X_i, say n_tau in the paper (Xi[1]...Xi[nt]).
-    N : int
-        Cardinality of the data set X, say n_X in the paper.
-    sigma : float
-        The standard deviation of the noise of normal distribution.
-    ne : int
-        For convinence, remaining consistent with other generate_ functions.
+class MRA_generate():
+    def __init__(self,d=100,nt=20,N=10000,sigma=0,ne=20):
+        '''
+        Parameters
+        ----------
+        d : int
+            The dimensions of each instance, say d=dim Xi[j] (e.g. d=28*28 for mnist).
+        nt : int
+            The number of instances in each X_i, say n_tau in the paper (Xi[1]...Xi[nt]).
+        N : int
+            Cardinality of the data set X, say n_X in the paper.
+        sigma : float
+            The standard deviation of the noise of normal distribution.
+        ne : int
+            For convinence, remaining consistent with other generate_ functions.
         
-    Returns
-    -------
-    numpy.ndarray
-        Return the generated data set X, a N*nt*d numpy tensor.
-        X.shape=(N,nt,d)
-    '''
-    X=np.empty((N,nt,d), dtype = float, order = 'C')
-    for i in range(N):
-        theta=np.random.rand(d)
-        for j in range(nt):
-            l=np.random.randint(d)
-            for k in range(d):
-                X[i,j,k]=theta[(k+l)%d]+sigma*np.random.normal()
-    return X
-def generate_trigonometric(d=100,nt=20,N=10000,sigma=0,ne=20):
-    '''
-    Generate a Multireference Alignment (MRA) data set X using sin(nx) and cos(nx)
-    
-    Parameters
-    ----------
-    d : int
-        The dimensions of each instance, say d=dim Xi[j] (e.g. d=28*28 for mnist).
-    nt : int
-        The number of instances in each X_i, say n_tau in the paper (Xi[1]...Xi[nt]).
-    N : int
-        Cardinality of the data set X, say n_X in the paper.
-    ne: int
-        Used to limit the sample space of functions {g_m}.
-    sigma : float
-        The standard deviation of the Gaussian noise.
-        
-    Returns
-    -------
-    numpy.ndarray
-        Return the generated data set X, a N*nt*d numpy tensor.
-        X.shape=(N,nt,d)
-    '''
-    def f(n,x):
-        return math.cos(n*x/d*2*math.pi)
-    X=np.empty((N,nt,d), dtype = float, order = 'C')
-    ne=10
-    for i in range(N):
-        e=np.random.randint(ne)
-        theta=[f(e,k) for k in range(d)]
-        for j in range(nt):
-            l=np.random.randint(d)
-            for k in range(d):
-                X[i,j,k]=theta[(k+l)%d]+sigma*np.random.normal()
-    return X
+        Yields
+        ----------
+        X : numpy.ndarray
+            Return the generated data set X, a N*nt*d numpy tensor.
+            X.shape=(N,nt,d)
+        SNR : numpy.ndarray
+            SNR.shape=(N,)
+            Signal-to-noise ratio
+        thetas : numpy.ndarray
+            theta.shape=(N,d)
+        shifts : numpy.ndarray
+            shifts.shapr=(N,nt)
+        '''
+        self.d=d
+        self.nt=nt
+        self.N=N
+        self.sigma=sigma
+        self.ne=ne
+        self.X=np.empty((N,nt,d), dtype = float, order = 'C')
+        self.SNR=np.empty(N)
+        self.thetas=np.empty((N,d), dtype = float, order = 'C')
+        self.shifts=np.empty((N,nt), dtype = float, order = 'C')
+    def generate_random(self):
+        '''
+        Generate a Multireference Alignment (MRA) data set X. 
+        X[i,j,:] is the j-th instance of the i-th data. 
+        The value X[i,j,k] randomly samples from a uniform distribution over [0, 1).
+        X[i,j,k]~U(0,1)+noise, iid, where k=1,2...d (given 1<=i<=N and 1<=j<=nt).
+        '''
+        d=self.d;nt=self.nt;N=self.N;sigma=self.sigma;ne=self.ne;
+        X=self.X;SNR=self.SNR;thetas=self.thetas;shifts=self.shifts
+        for i in range(N):
+            thetas[i,:]=np.random.rand(d)
+            if sigma!=0:
+                SNR[i]=(np.linalg.norm(thetas[i,:],2)/sigma)**2
+            else:
+                SNR[i]=np.inf
+            for j in range(nt):
+                l=np.random.randint(d)
+                shifts[i,j]=l
+                for k in range(d):
+                    X[i,j,k]=thetas[i,(k+l)%d]+sigma*np.random.normal()
+        return X
+    def generate_trigonometric(self):
+        '''
+        Generate a Multireference Alignment (MRA) data set X using sin(nx) and cos(nx)
+        '''
+        d=self.d;nt=self.nt;N=self.N;sigma=self.sigma;ne=self.ne;
+        X=self.X;SNR=self.SNR;thetas=self.thetas;shifts=self.shifts
+        def f(n,x):
+            return math.cos(n*x/d*2*math.pi)
+        for i in range(N):
+            e=np.random.randint(ne)
+            thetas[i,:]=[f(e,k) for k in range(d)]
+            if sigma!=0:
+                SNR[i]=(np.linalg.norm(thetas[i,:],2)/sigma)**2
+            else:
+                SNR[i]=np.inf
+            for j in range(nt):
+                l=np.random.randint(d)
+                shifts[i,j]=l
+                for k in range(d):
+                    X[i,j,k]=thetas[i,(k+l)%d]+sigma*np.random.normal()
+        return X
 
-def generate_smooth(d=100,nt=20,N=10000,sigma=0,ne=20):
-    '''
-    Generate a Multireference Alignment (MRA) data set X. 
-    X[i,j,:] is the j-th instance of the i-th data. 
-    X[i,j,k] is "smooth" wrt k (though X[i,j,:] is discrete).
-    X[i,j,:] is generated by conbination of Sin and Cos (g(m,x) in the code).
-    
-    Parameters
-    ----------
-    d : int
-        The dimensions of each instance, say d=dim Xi[j] (e.g. d=28*28 for mnist).
-    nt : int
-        The number of instances in each X_i, say n_tau in the paper (Xi[1]...Xi[nt]).
-    N : int
-        Cardinality of the data set X, say n_X in the paper.
-    ne: int
-        Used to limit the sample space of smooth functions {g_m}.
-        X[i,j,k] can only be g_m(k/d+ a cyclic shift related to j), where m is a random integer from 0 to ne-1.
-        Here, g_m(x)=g(m,x) in the code. g's can be modified, but the period should remains 1.
-    sigma : float
-        The standard deviation of the Gaussian noise.
-        
-    Returns
-    -------
-    numpy.ndarray
-        Return the generated data set X, a N*nt*d numpy tensor.
-        X.shape=(N,nt,d)
-        
-    See Also
-    -------
-    generate_smooth_no_replacement
-    '''
-    def f(n,x):
-        if n%2==0:
-            return math.cos(n/2*x/d*2*math.pi)
-        else:
-            return math.sin((n+1)/2*x/d*2*math.pi)
-    def g(n,x):
-        return sum([f(k,x)/(k+1) for k in range(n+1)])
-    X=np.empty((N,nt,d), dtype = float, order = 'C')
-    ne=10
-    for i in range(N):
-        e=np.random.randint(ne)
-        theta=[g(e,k) for k in range(d)]
-        for j in range(nt):
-            l=np.random.randint(d) # move left
-            for k in range(d):
-                X[i,j,k]=theta[(k+l)%d]+sigma*np.random.normal()
-    return X
+    def generate_smooth(self):
+        '''
+        Generate a Multireference Alignment (MRA) data set X. 
+        X[i,j,:] is the j-th instance of the i-th data. 
+        X[i,j,k] is "smooth" wrt k (though X[i,j,:] is discrete).
+        X[i,j,:] is generated by conbination of Sin and Cos (g(m,x) in the code).
+        '''
+        d=self.d;nt=self.nt;N=self.N;sigma=self.sigma;ne=self.ne;
+        X=self.X;SNR=self.SNR;thetas=self.thetas;shifts=self.shifts
+        def f(n,x):
+            if n%2==0:
+                return math.cos(n/2*x/d*2*math.pi)
+            else:
+                return math.sin((n+1)/2*x/d*2*math.pi)
+        def g(n,x):
+            return sum([f(k,x)/(k+1) for k in range(n+1)])
+        for i in range(N):
+            e=np.random.randint(ne)
+            thetas[i,:]=[g(e,k) for k in range(d)]
+            if sigma!=0:
+                SNR[i]=(np.linalg.norm(thetas[i,:],2)/sigma)**2
+            else:
+                SNR[i]=np.inf
+            for j in range(nt):
+                l=np.random.randint(d)
+                shifts[i,j]=l      
+                for k in range(d):
+                    X[i,j,k]=thetas[(k+l)%d]+sigma*np.random.normal()
+        return X
 
-def generate_smooth_no_replacement(d=100,nt=20,N=10000,sigma=0,ne=20):
-    '''
-    Generate a Multireference Alignment (MRA) data set X. 
-    X[i,j,:] is the j-th instance of the i-th data. 
-    X[i,j,k] is "smooth" wrt k (though X[i,j,:] is discrete).
-    The difference between generate_smooth_no_replacement and generate_smooth is that
-    this function guarantees the cyclic shifts related to different j's are all different, 
-    while generate_smooth does not. 
-    
-    Parameters
-    ----------
-    d : int
-        The dimensions of each instance, say d=dim Xi[j] (e.g. d=28*28 for mnist).
-    nt : int
-        The number of instances in each X_i, say n_tau in the paper (Xi[1]...Xi[nt]).
-    N : int
-        Cardinality of the data set X, say n_X in the paper.
-    ne: int
-        Used to limit the sample space of smooth functions {g_m}.
-        m's can only be 0,1,2...ne.
-        g_m(x) refers to g(m,x) in the code.
-    sigma : float
-        The standard deviation of the Gaussian noise.
-        
-    Returns
-    -------
-    numpy.ndarray
-        Return the generated data set X, a N*nt*d numpy tensor.
-        X.shape=(N,nt,d)
-        
-    See Also
-    -------
-    generate_smooth
-    '''
-    def f(n,x):
-        if n%2==0:
-            return math.cos(n/2*x/d*2*math.pi)
-        else:
-            return math.sin((n+1)/2*x/d*2*math.pi)
-    def g(n,x):
-        return sum([f(k,x)/(k+1) for k in range(n+1)])
-    X=np.empty((N,nt,d), dtype = float, order = 'C')
-    ne=10
-    for i in range(N):
-        e=np.random.randint(ne)
-        theta=[g(e,k) for k in range(d)]
-        l=random.sample(range(d),nt)
-        for j in range(nt):
-            for k in range(d):
-                X[i,j,k]=theta[(k+l[j])%d]+sigma*np.random.normal()
-    return X
-
-def test():
-    '''
-    Quick test to give intuition of generate_smooth by drawing plots.
-    '''
-    X=generate_smooth(100,20,1000,10,0.01)
-    for j in range(5):
-        plt.plot(range(100),X[0,j,:],label='%d'%j)
-    plt.legend()
-    plt.show()
+    def generate_smooth_no_replacement(self):
+        '''
+        Generate a Multireference Alignment (MRA) data set X. 
+        X[i,j,:] is the j-th instance of the i-th data. 
+        X[i,j,k] is "smooth" wrt k (though X[i,j,:] is discrete).
+        The difference between generate_smooth_no_replacement and generate_smooth is that
+        this function guarantees the cyclic shifts related to different j's are all different, 
+        while generate_smooth does not. 
+        '''
+        d=self.d;nt=self.nt;N=self.N;sigma=self.sigma;ne=self.ne;
+        X=self.X;SNR=self.SNR;thetas=self.thetas;shifts=self.shifts
+        def f(n,x):
+            if n%2==0:
+                return math.cos(n/2*x/d*2*math.pi)
+            else:
+                return math.sin((n+1)/2*x/d*2*math.pi)
+        def g(n,x):
+            return sum([f(k,x)/(k+1) for k in range(n+1)])
+        for i in range(N):
+            e=np.random.randint(ne)
+            thetas[i,:]=[g(e,k) for k in range(d)]
+            if sigma!=0:
+                SNR[i]=(np.linalg.norm(thetas[i,:],2)/sigma)**2
+            else:
+                SNR[i]=np.inf
+            l=random.sample(range(d),nt)
+            for j in range(nt):
+                shifts[i,j]=l
+                for k in range(d):
+                    X[i,j,k]=thetas[i,(k+l[j])%d]+sigma*np.random.normal()
+        return X
