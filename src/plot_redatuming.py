@@ -21,7 +21,7 @@ def plot_redatuming(redatuming_object):
     fig, axs = plt.subplots(2, 2, sharex=True, sharey=True, figsize=(16,16))
     fig.suptitle('Redatuming')
     fig.subplots_adjust(wspace=0, hspace=0)
-    fig.subplots_adjust(top=0.92,left=0.1,bottom=0.05,right=0.95)
+    fig.subplots_adjust(top=0.92,left=0.15,bottom=0.05,right=0.95)
     # N2 | [0,0] | [0,1]
     #----|-------+-------
     # N1 | [1,0] | [1,1] 

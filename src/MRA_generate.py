@@ -111,7 +111,7 @@ class MRA_generate():
                 l=np.random.randint(d)
                 shifts[i,j]=l      
                 for k in range(d):
-                    X[i,j,k]=thetas[(k+l)%d]+sigma*np.random.normal()
+                    X[i,j,k]=thetas[i,(k+l)%d]+sigma*np.random.normal()
         return X
 
     def generate_smooth_no_replacement(self):
