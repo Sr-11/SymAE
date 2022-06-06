@@ -3,7 +3,7 @@ import math
 import matplotlib.pyplot as plt
 import random
 import timeit
-def generate(d=100,nt=20,N=10000,sigma=0):
+def generate_random(d=100,nt=20,N=10000,sigma=0,ne=20):
     '''
     Generate a Multireference Alignment (MRA) data set X. 
     X[i,j,:] is the j-th instance of the i-th data. 
@@ -21,6 +21,8 @@ def generate(d=100,nt=20,N=10000,sigma=0):
         Cardinality of the data set X, say n_X in the paper.
     sigma : float
         The standard deviation of the noise of normal distribution.
+    ne : int
+        For convinence, remaining consistent with other generate_ functions.
         
     Returns
     -------
@@ -36,7 +38,43 @@ def generate(d=100,nt=20,N=10000,sigma=0):
             for k in range(d):
                 X[i,j,k]=theta[(k+l)%d]+sigma*np.random.normal()
     return X
-def generate_smooth(d=100,nt=20,N=10000,ne=10,sigma=0):
+def generate_trigonometric(d=100,nt=20,N=10000,sigma=0,ne=20):
+    '''
+    Generate a Multireference Alignment (MRA) data set X using sin(nx) and cos(nx)
+    
+    Parameters
+    ----------
+    d : int
+        The dimensions of each instance, say d=dim Xi[j] (e.g. d=28*28 for mnist).
+    nt : int
+        The number of instances in each X_i, say n_tau in the paper (Xi[1]...Xi[nt]).
+    N : int
+        Cardinality of the data set X, say n_X in the paper.
+    ne: int
+        Used to limit the sample space of functions {g_m}.
+    sigma : float
+        The standard deviation of the Gaussian noise.
+        
+    Returns
+    -------
+    numpy.ndarray
+        Return the generated data set X, a N*nt*d numpy tensor.
+        X.shape=(N,nt,d)
+    '''
+    def f(n,x):
+        return math.cos(n*x/d*2*math.pi)
+    X=np.empty((N,nt,d), dtype = float, order = 'C')
+    ne=10
+    for i in range(N):
+        e=np.random.randint(ne)
+        theta=[f(e,k) for k in range(d)]
+        for j in range(nt):
+            l=np.random.randint(d)
+            for k in range(d):
+                X[i,j,k]=theta[(k+l)%d]+sigma*np.random.normal()
+    return X
+
+def generate_smooth(d=100,nt=20,N=10000,sigma=0,ne=20):
     '''
     Generate a Multireference Alignment (MRA) data set X. 
     X[i,j,:] is the j-th instance of the i-th data. 
@@ -86,7 +124,7 @@ def generate_smooth(d=100,nt=20,N=10000,ne=10,sigma=0):
                 X[i,j,k]=theta[(k+l)%d]+sigma*np.random.normal()
     return X
 
-def generate_smooth_no_replacement(d=100,nt=20,N=10000,ne=10,sigma=0):
+def generate_smooth_no_replacement(d=100,nt=20,N=10000,sigma=0,ne=20):
     '''
     Generate a Multireference Alignment (MRA) data set X. 
     X[i,j,:] is the j-th instance of the i-th data. 

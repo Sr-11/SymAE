@@ -1,4 +1,3 @@
-
 #%% Load packages
 import tensorflow as tf
 tfk = tf.keras
@@ -11,7 +10,7 @@ os.environ["CUDA_VISIBLE_DEVICES"]="0,1"
 
 gpus = tf.config.experimental.list_physical_devices('GPU')
 print("Num GPUs Available: ", len(gpus))
-print("TensorFlow Versipn: ", tf.__version__)
+print("TensorFlow Version: ", tf.__version__)
 
 class Downsampler(tf.keras.Model):
   def __init__(self, kernel_sizes, filters, fact=4):
