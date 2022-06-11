@@ -17,10 +17,10 @@ def plot_training(model,test_X):
     rows=3
     test_Y=model.predict(test_X)
     plt.rc('font', size=25)
-    fig, axs = plt.subplots(rows, 2, sharex=True, sharey=True, figsize=(16,20))
+    fig, axs = plt.subplots(rows, 2, sharex=True, sharey=True, figsize=(16,10))
     fig.suptitle('p=%d, q=%d'%(p,q))
     fig.subplots_adjust(wspace=0, hspace=0)
-    fig.subplots_adjust(top=0.95,left=0.1,bottom=0.05,right=0.95)
+    fig.subplots_adjust(top=0.9,left=0.1,bottom=0.05,right=0.95)
     #fig.supylabel('value')
     axs[rows-1,0].set(xlabel='input')
     axs[rows-1,1].set(xlabel='output')

@@ -6,8 +6,8 @@ nt=20 # nt is the number of instances in each X_i, say n_tau in the paper (Xi[1]
 d=100 # d is the dimensions of each "fundamental" data, say d=dim Xi[j] (e.g. d=28*28 for mnist)
 
 # Parameters related to SymAE
-p=8 # symmetric encoder latent dimensions, p=dim Ci (Coherent Code)
-q=22 # nuisance encoder latent dimensions, q=dim Ni[j] (Dissimilar Code)
+p=2 # symmetric encoder latent dimensions, p=dim Ci (Coherent Code)
+q=2 # nuisance encoder latent dimensions, q=dim Ni[j] (Dissimilar Code)
 
 # Parameters related to NeuralNets
 kernel_size=5 # How to convolute, the size of the kernel

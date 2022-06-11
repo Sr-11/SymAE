@@ -20,4 +20,8 @@
 14. Why $|S_\epsilon|\leq\frac{Vol(S+\frac12D)}{Vol(\frac12D)}$? In "Tight Oracle Inequalities," beginning of III.PROOFS
 15. Lemma3.1(Covering Number for Low-Rank Matrices) in "Tight Oracle Inequalities" can be stronger, r->r-1
 16. How to def $Vol()$ ? In proof of Lemma3.1
-17. 
+## 6/8-10
+17. In MRA, number of states shouln't be small, because we need generalization.
+18. Implicit Regularizers
+19. 如果我们要给$\mathbb{R}^k$上的函数赋一个周期，知道三角函数族是什么，那怎么给其他函数赋一个最合理的？
+20.
