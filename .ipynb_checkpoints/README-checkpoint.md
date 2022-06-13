@@ -24,4 +24,5 @@
 17. In MRA, number of states shouln't be small, because we need generalization.
 18. Implicit Regularizers
 19. 如果我们要给$\mathbb{R}^k$上的函数赋一个周期，知道三角函数族是什么，那怎么给其他函数赋一个最合理的？
-20.
+## 6/11
+20. I can't see any reason why redatuming would be successful, but it truely happens. Why? May because of generalization, the NN learns the "jump".

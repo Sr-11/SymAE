@@ -4,7 +4,7 @@ tfk = tf.keras
 tfkl = tf.keras.layers
 tfkltd= tf.keras.layers.TimeDistributed
 class SymAE(tf.keras.Model):
-    def __init__(self,N=1000,nt=20,d=100,p=8,q=22,kernel_size=5,filters=64): 
+    def __init__(self,N=1000,nt=20,d=100,p=8,q=22,kernel_size=5,filters=64,dropout_rate=0.65): 
         '''
         class SymAE is the complete AutoEncoder
 
@@ -52,7 +52,7 @@ class SymAE(tf.keras.Model):
         encoder_input=tfk.Input(shape=(nt,d,1), dtype='float32', name='encoder_input')
         znuisance=nui_encoder(encoder_input)
         zsym=sym_encoder(encoder_input)
-        latentcat=symae.LatentCat(0.65) #0.4 droupout
+        latentcat=symae.LatentCat(dropout_rate) #0.4 droupout
         self.latentcat=latentcat
         encoder_output=latentcat(zsym,znuisance)
         encoder=tfk.Model(encoder_input, encoder_output, name="encoder")
