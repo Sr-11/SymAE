@@ -6,7 +6,7 @@ tfkltd= tf.keras.layers.TimeDistributed
 
 import os 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"]="0,1"
+os.environ["CUDA_VISIBLE_DEVICES"]="6,7"
 
 gpus = tf.config.experimental.list_physical_devices('GPU')
 print("Num GPUs Available: ", len(gpus))
@@ -332,7 +332,7 @@ class LatentCat(tf.keras.Model):
     # self.drop=tfkl.Dropout(alpha)
 
   def call(self, zsym, znuisance,training=False):
-    znuisance=self.drop(znuisance,training=training)
+    #znuisance=self.drop(znuisance,training=training)
     z=tfkl.concatenate([zsym, znuisance])
     return z
 

@@ -39,8 +39,8 @@ def plot_redatuming(redatuming_object):
     axs[1,1].plot(range(d),redatum.C2_N1_synthetic,color='C3')
 
 
-    axs[1,0].set(xlabel='Coherent 1')
-    axs[1,1].set(xlabel='Coherent 2')
+    axs[1,0].set(xlabel='Coherent 1 \n State=%d'%redatum.MRA1.states[0])
+    axs[1,1].set(xlabel='Coherent 2 \n State=%d'%redatum.MRA2.states[0])
     axs[1,0].set(ylabel='Nuisance 1 \n Shift=%d'%(redatum.MRA1.shifts[0,redatum.t]))
     axs[0,0].set(ylabel='Nuisance 2 \n Shift=%d'%(redatum.MRA2.shifts[0,redatum.t]))
     for ax in axs.flat:
