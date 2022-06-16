@@ -6,7 +6,7 @@ import timeit
 def g0(n,x):
     return np.random.rand(1)
 class MRA_generate():
-    def __init__(self,d=100,nt=20,N=10000,sigma=0,ne=20,g=g0):
+    def __init__(self,d=100,nt=20,N=10000,sigma=0,ne=20,g=g0,replace=True):
         '''
         Parameters
         ----------
@@ -44,6 +44,7 @@ class MRA_generate():
         self.N=N
         self.sigma=sigma
         self.ne=ne
+        self.replace=replace
         X=np.empty((N,nt,d), dtype = float, order = 'C')
         self.X=X
         states=np.empty(N, dtype = int)
@@ -63,8 +64,10 @@ class MRA_generate():
                 SNR[i]=(np.linalg.norm(thetas[i,:],2)/sigma)**2
             else:
                 SNR[i]=np.inf
+            ls=np.random.choice(range(d),replace=replace,size=nt)
             for j in range(nt):
-                l=np.random.randint(d)
+                #l=np.random.randint(d)
+                l=ls[j]
                 shifts[i,j]=l
                 for k in range(d):
                     X[i,j,k]=thetas[i,(k+l)%d]+sigma*np.random.normal()
