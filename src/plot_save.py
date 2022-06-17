@@ -37,8 +37,8 @@ def plot_save(fig,ID):
                 searchObj=re.search('plot_%d.png'%ID,name)
                 if searchObj:
                     print('plot_%d.png already exist'%ID)
-                    print('Saved as plot_0.png')
-                    ID=0
+                    #print('Saved as plot_0.png')
+                    #ID=0
                     break
         # Save plot
         fig.savefig('./plots/plot_%d.png'%ID)
