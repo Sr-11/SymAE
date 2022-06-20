@@ -6,7 +6,7 @@ import timeit
 def g0(n,x):
     return np.random.rand(1)
 class MRA_generate():
-    def __init__(self,d=100,nt=20,N=10000,sigma=0,ne=20,g=g0,replace=True):
+    def __init__(self,d=100,nt=20,N=10000,sigma=0,ne=20,g=g0,replace=False,outer_replace=True):
         '''
         Parameters
         ----------
@@ -56,21 +56,36 @@ class MRA_generate():
         shifts=np.empty((N,nt), dtype = float, order = 'C')
         self.shifts=shifts
         self.g=g
+        waiting_samples = [list(range(d)) for i in range(ne)]
+        waiting_states = list(range(ne))
         for i in range(N):
-            e=np.random.randint(ne)
+            e=np.random.choice(waiting_states)
             states[i]=e
             thetas[i,:]=[g(e,k/d) for k in range(d)]
             if sigma!=0:
                 SNR[i]=(np.linalg.norm(thetas[i,:],2)/sigma)**2
             else:
                 SNR[i]=np.inf
-            ls=np.random.choice(range(d),replace=replace,size=nt)
+            ls=np.random.choice(waiting_samples[e],replace=replace,size=nt)
+            if outer_replace==False:
+                for l in ls:
+                    waiting_samples[e].remove(l)
+                if len(waiting_samples[e])<nt:
+                    waiting_states.remove(e)
             for j in range(nt):
                 #l=np.random.randint(d)
                 l=ls[j]
                 shifts[i,j]=l
                 for k in range(d):
                     X[i,j,k]=thetas[i,(k+l)%d]+sigma*np.random.normal()
+           
+        
+        
+        
+        
+        
+        
+        
     def generate_default(self):
         d=self.d;nt=self.nt;N=self.N;sigma=self.sigma;ne=self.ne;states=self.states
         X=self.X;SNR=self.SNR;thetas=self.thetas;shifts=self.shifts;g=self.g

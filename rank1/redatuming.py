@@ -1,4 +1,3 @@
-from parameters import *
 import numpy as np
 from tqdm import trange
 def redatuming(model,data):

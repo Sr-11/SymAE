@@ -3,7 +3,7 @@ import math
 import matplotlib.pyplot as plt
 import random
 class generate():
-    def __init__(self,states,nuisances,nx,nt):
+    def __init__(self,states,nuisances,nx,nt,outer_replace=False):
         states = np.copy(states)
         nuisances = np.copy(nuisances)
         n1 = len(states)
@@ -22,7 +22,8 @@ class generate():
                 j = waiting_samples[e][c]
                 X_nuisances[i,t] = nuisances[j]
                 X[i,t,0] = D[e,j]
-                waiting_samples[e].pop(c)
+                if outer_replace == False:
+                    waiting_samples[e].pop(c)
             if len(waiting_samples[e]) < nt:
                  waiting_states.remove(e)
         self.X = X
