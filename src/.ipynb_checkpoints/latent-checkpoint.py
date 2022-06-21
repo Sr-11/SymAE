@@ -13,13 +13,13 @@ def latent(model,MRA):
     
     Returns
     ----------
-    C[0,:] : np.array
-        1-dimensional 
-    N[0,:] : np.array
-        1-dimensional
+    C : np.array
+        C.shape = N*p
+    N : np.array
+        N.shape = N*(q*nt)
     '''
     X=MRA.X
-    C=model.sym_encoder.predict(X)
-    N=model.nui_encoder.predict(X)
-    return C[0,:],N[0,:]
+    C=model.sym_encoder.predict(X,verbose=0)
+    N=model.nui_encoder.predict(X,verbose=0)
+    return C,N
 
