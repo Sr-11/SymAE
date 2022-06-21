@@ -71,9 +71,12 @@ class MRA_generate():
         self.SNR=SNR
         shifts=np.empty((N,nt), dtype = float, order = 'C')
         self.shifts=shifts
-        self.g=g
         waiting_samples = [list(range(d)) for i in range(ne)]
+        self.waiting_samples=waiting_samples
         waiting_states = list(range(ne))
+        self.waiting_states=waiting_states
+        select_times = np.zeros((ne,d))
+        self.select_times = select_times
         for i in range(N):
             e=np.random.choice(waiting_states)
             states[i]=e
@@ -94,6 +97,7 @@ class MRA_generate():
                 shifts[i,j]=l
                 for k in range(d):
                     X[i,j,k]=thetas[i,(k+l)%d]+sigma*np.random.normal()
+                    select_times[e,l] += 1
         return X
         
     """
