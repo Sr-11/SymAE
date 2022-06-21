@@ -1,4 +1,15 @@
 import numpy as np
 def fourier(theta):
-    d=len(theta)
-    return np.fft.fft(theta)/d
+    '''
+    Fourier transformation on Zd
+    
+    Parameters
+    ----------
+    theta : list
+        The signal you want to transform
+        
+    Returns
+    ----------
+    Fourier transformation of theta
+    '''
+    return np.fft.fft(theta)/len(theta)

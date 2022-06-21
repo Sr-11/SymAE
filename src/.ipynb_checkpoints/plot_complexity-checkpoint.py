@@ -1,7 +1,9 @@
 import numpy as np
 from redatuming import redatuming
 def plot_complexity(model,MRA1,MRA2,t):
-    
+    '''
+    Currently not used
+    '''
     Y11=model.predict(MRA1.X)
     Y22=model.predict(MRA2.X)
     Y21,Y12=redatuming(model,X1,X2,t)

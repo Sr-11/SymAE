@@ -10,7 +10,7 @@ def plot_save(fig,ID):
         If ID>=1, it's used to distinguish different plots, each .png file has a unique ID>=1.
         If ID>=1 and this ID has been used, fig will saved as './plots/plot_0.png'
         If ID==-1, this function will find the smallest available (hasn't been used) ID.
-        If ID==0, './plots/plot_0.png' is a temporary storage.
+        If ID==0, save at './plots/plot_0.png' which is a temporary storage.
         
     Yields
     ----------

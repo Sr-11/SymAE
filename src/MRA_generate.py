@@ -22,6 +22,11 @@ class MRA_generate():
             For convinence, remaining consistent with other generate_ functions.
         g : function
             g(n,x) n=0,1..., x∈(0,1)
+        replace : bool
+            if replace==True, Xi[j] (i fixed, j different) may correspond to same block in D.
+        outer_replace : bool
+            if outer_replace==False, Xi[j] are all different (for all i,j).
+            
         Yields
         ----------
         X : numpy.ndarray
@@ -80,12 +85,7 @@ class MRA_generate():
                     X[i,j,k]=thetas[i,(k+l)%d]+sigma*np.random.normal()
            
         
-        
-        
-        
-        
-        
-        
+    """
     def generate_default(self):
         d=self.d;nt=self.nt;N=self.N;sigma=self.sigma;ne=self.ne;states=self.states
         X=self.X;SNR=self.SNR;thetas=self.thetas;shifts=self.shifts;g=self.g
@@ -209,3 +209,4 @@ class MRA_generate():
                 for k in range(d):
                     X[i,j,k]=thetas[i,(k+l[j])%d]+sigma*np.random.normal()
         return X
+    """

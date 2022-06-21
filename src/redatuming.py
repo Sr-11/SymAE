@@ -1,7 +1,21 @@
 from parameters import *
 import numpy as np
 class redatuming():
-    def __init__(self,model,MRA1,MRA2,t):
+    def __init__(self,model,MRA1,MRA2,t,p=p,q=q):
+        '''
+        Parameters
+        ----------
+        model : SymAE
+        MRA1 : MRA_generate
+        MRA2 : MRA_generate
+        t : int
+        p : int
+        q : int
+        
+        Yields
+        ----------
+        All 8 self.C1/2_N1/2_input/output/virtual/synthetic correspond to 8 lines in the plot
+        '''
         self.model=model
         self.MRA1=MRA1
         self.MRA2=MRA2
@@ -27,6 +41,9 @@ class redatuming():
         self.C2_N1_virtual=Y12[0,t,:]
         self.C2_N1_synthetic=np.roll(MRA2.thetas[0,:],int(-MRA1.shifts[0,t]))
     def MSE(self):
+        '''
+        Evaluate the MSE
+        '''
         self.MSE_C1_N2=np.mean((self.C1_N2_virtual-self.C1_N2_synthetic)**2)
         self.MSE_C2_N1=np.mean((self.C2_N1_virtual-self.C2_N1_synthetic)**2)
         return self.MSE_C1_N2,self.MSE_C2_N1

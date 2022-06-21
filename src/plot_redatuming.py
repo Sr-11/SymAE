@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
 from redatuming import redatuming
-def plot_redatuming(redatuming_object):
+def plot_redatuming(redatuming_object,p=p,q=q):
     '''
     Plot a 2*2 figure, showing the redatuming result
     
