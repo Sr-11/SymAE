@@ -45,7 +45,7 @@ def plot_redatuming(redatuming_object):
     axs[0,0].set(ylabel='Nuisance 2 \n Shift=%d'%(redatum.MRA2.shifts[0,redatum.t]))
     for ax in axs.flat:
         ax.grid(True)
-        ax.legend()
+        #ax.legend()
     blue_patch = mpatches.Patch(color='C0', label='input')
     orange_patch = mpatches.Patch(color='C1', label='output')
     green_patch = mpatches.Patch(color='C2', label='virtual')
