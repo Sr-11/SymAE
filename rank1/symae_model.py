@@ -25,11 +25,13 @@ class SymAE(tf.keras.Model):
         distribute_input = tfk.Input(shape=(p+q*nt), name='latentcode')
         distribute_output=symae.DistributeZsym(nt, p, q)(distribute_input)
         distzsym = tfk.Model(distribute_input, distribute_output, name='distzsym')
+        self.distzsym = distzsym
         
         #Build mixer in decoder
         mixer_input = tfk.Input(shape=(nt,p+q), name='mixer_input')
         mixer_output=symae.MixerDense0D(1,p+q)(mixer_input)
         mixer = tfk.Model(mixer_input, mixer_output, name='mixer') 
+        self.mixer = mixer
         
         # Build encoder
         encoder_input=tfk.Input(shape=(nt,1), dtype='float32', name='encoder_input')

@@ -21,10 +21,10 @@ class MRA_generate():
         For convinence, remaining consistent with other generate_ functions.
     g : function
         g(n,x) n=0,1..., x∈(0,1)
-    replace : bool
-        if replace==True, Xi[j] (i fixed, j different) may correspond to same block in D.
-    outer_replace : bool
-        if outer_replace==False, Xi[j] are all different (for all i,j).
+    replace : int
+        If replace==0, without replacement everywhere. Must $n_x*n_t <= n_1*n_2$ and $n_t <= n_2$.  
+        If replace==1, X[i,:] have different nuisances, but each block in D can appear multiple times in X.  
+        If replace==2, with replacement everywhere.
 
     Yields
     ----------
@@ -43,7 +43,7 @@ class MRA_generate():
         states is used to mark how many different states are in X
         doesn't have uniform format
     '''
-    def __init__(self,d=100,nt=20,N=10000,sigma=0,ne=20,g=g0,replace=False,outer_replace=True):
+    def __init__(self,d=100,nt=20,N=10000,sigma=0,ne=20,g=g0,replace=1):
         self.d=d
         self.nt=nt
         self.N=N
@@ -51,7 +51,6 @@ class MRA_generate():
         self.ne=ne
         self.g=g
         self.replace=replace
-        self.outer_replace=outer_replace
     def generate_default(self):
         d = self.d
         nt = self.nt
@@ -60,7 +59,6 @@ class MRA_generate():
         ne = self.ne
         g = self.g
         replace = self.replace
-        outer_replace = self.outer_replace
         X=np.empty((N,nt,d), dtype = float, order = 'C')
         self.X=X
         states=np.empty(N, dtype = int)
@@ -77,27 +75,59 @@ class MRA_generate():
         self.waiting_states=waiting_states
         select_times = np.zeros((ne,d))
         self.select_times = select_times
-        for i in range(N):
-            e=np.random.choice(waiting_states)
-            states[i]=e
-            thetas[i,:]=[g(e,k/d) for k in range(d)]
-            if sigma!=0:
-                SNR[i]=(np.linalg.norm(thetas[i,:],2)/sigma)**2
-            else:
-                SNR[i]=np.inf
-            ls=np.random.choice(waiting_samples[e],replace=replace,size=nt)
-            if outer_replace==False:
+        if replace == 0:
+            assert N*nt<=ne*d and nt<=d, 'X is larger than D'
+            for i in range(N):
+                e=np.random.choice(waiting_states)
+                states[i]=e
+                thetas[i,:]=[g(e,k/d) for k in range(d)]
+                if sigma!=0:
+                    SNR[i]=(np.linalg.norm(thetas[i,:],2)/sigma)**2
+                else:
+                    SNR[i]=np.inf
+                ls=np.random.choice(waiting_samples[e],replace=replace,size=nt)
                 for l in ls:
                     waiting_samples[e].remove(l)
                 if len(waiting_samples[e])<nt:
                     waiting_states.remove(e)
-            for j in range(nt):
-                #l=np.random.randint(d)
-                l=ls[j]
-                shifts[i,j]=l
-                select_times[e,l] += 1
-                for k in range(d):
-                    X[i,j,k]=thetas[i,(k+l)%d]+sigma*np.random.normal()
+                for j in range(nt):
+                    l=ls[j]
+                    shifts[i,j]=l
+                    select_times[e,l] += 1
+                    for k in range(d):
+                        X[i,j,k]=thetas[i,(k+l)%d]+sigma*np.random.normal()
+        if replace == 1:
+            for i in range(N):
+                e=np.random.choice(waiting_states)
+                states[i]=e
+                thetas[i,:]=[g(e,k/d) for k in range(d)]
+                if sigma!=0:
+                    SNR[i]=(np.linalg.norm(thetas[i,:],2)/sigma)**2
+                else:
+                    SNR[i]=np.inf
+                ls=np.random.choice(waiting_samples[e],replace=False,size=nt)
+                for j in range(nt):
+                    l=ls[j]
+                    shifts[i,j]=l
+                    select_times[e,l] += 1
+                    for k in range(d):
+                        X[i,j,k]=thetas[i,(k+l)%d]+sigma*np.random.normal()
+        if replace == 2:
+            for i in range(N):
+                e=np.random.choice(waiting_states)
+                states[i]=e
+                thetas[i,:]=[g(e,k/d) for k in range(d)]
+                if sigma!=0:
+                    SNR[i]=(np.linalg.norm(thetas[i,:],2)/sigma)**2
+                else:
+                    SNR[i]=np.inf
+                ls=np.random.choice(waiting_samples[e],replace=True,size=nt)
+                for j in range(nt):
+                    l=ls[j]
+                    shifts[i,j]=l
+                    select_times[e,l] += 1
+                    for k in range(d):
+                        X[i,j,k]=thetas[i,(k+l)%d]+sigma*np.random.normal()
         return X
         
     """
