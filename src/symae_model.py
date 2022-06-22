@@ -48,6 +48,7 @@ class SymAE(tf.keras.Model):
         mixer_input = tfk.Input(shape=(nt,p+q), name='mixer_input')
         mixer_output=symae.Mixer1D(kernel_size,filters,10,d)(mixer_input)
         mixer = tfk.Model(mixer_input, mixer_output, name='mixer') 
+        self.mixer = mixer
         # Build encoder
         encoder_input=tfk.Input(shape=(nt,d,1), dtype='float32', name='encoder_input')
         znuisance=nui_encoder(encoder_input)

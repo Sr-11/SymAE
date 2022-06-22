@@ -95,9 +95,9 @@ class MRA_generate():
                 #l=np.random.randint(d)
                 l=ls[j]
                 shifts[i,j]=l
+                select_times[e,l] += 1
                 for k in range(d):
                     X[i,j,k]=thetas[i,(k+l)%d]+sigma*np.random.normal()
-                    select_times[e,l] += 1
         return X
         
     """
