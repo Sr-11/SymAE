@@ -12,7 +12,7 @@ q=20
 # Parameters related to NeuralNets
 kernel_size=5 # How to convolute, the size of the kernel
 filters=64 # How many filters in each convolution layer
-dropout_rate=0.5 # GaussianDropout
+dropout_rate=0.8 # GaussianDropout
 
 # Parameters related to my specific algorithm of generating MRA data
 ne=4

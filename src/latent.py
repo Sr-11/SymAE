@@ -1,5 +1,3 @@
-from parameters import *
-import numpy as np
 def latent(model,MRA):
     '''
     Obtain latent coherent code and latent nuisance code of data
