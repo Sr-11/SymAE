@@ -5,7 +5,28 @@ tfkl = tf.keras.layers
 tfkltd= tf.keras.layers.TimeDistributed
 
 class SymAE(tf.keras.Model):
-    def __init__(self,N=1000,nt=20,p=8,q=22,dropout_rate=0.65): 
+    def __init__(self, N, nt, p, q, dropout_rate): 
+        '''
+        class SymAE is the complete AutoEncoder
+
+        Parameters
+        ----------
+        # Parameters related to data itself
+        N : int
+            N is the Cardinality of the data set X, say n_X in the paper
+        nt : int
+            nt is the number of instances in each X_i, say n_tau in the paper (Xi[1]...Xi[nt])
+            
+        # Parameters related to SymAE
+        p : int
+            Symmetric encoder latent dimensions, p=dim Ci (Coherent Code)
+        q : int
+            Nuisance encoder latent dimensions, q=dim Ni[j] (Dissimilar Code)
+            
+        # Parameters related to NeuralNets
+        dropout_rate : float
+            Dropout rate
+        '''
         super(SymAE, self).__init__()
         
         # Build symmetric encoder

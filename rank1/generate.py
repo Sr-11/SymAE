@@ -5,10 +5,38 @@ import random
 class generate():
     def __init__(self, states, nuisances, nx, nt, replace=1):
         '''
+        Parameters
+        ------------
+        state : np.ndarray
+            states.shape=(n1,)
+            All states.
+        nuisances : np.ndarray
+            nuisances.shape=(n2,)
+            All nuisances.
+        nx : int
+            n_X in the paper.
+        nt : int
+            n_tau in the paper.
         replace : int
             If replace==0, without replacement everywhere. Must $n_x*n_t <= n_1*n_2$ and $n_t <= n_2$.  
             If replace==1, X[i,:] have different nuisances, but each block in D can appear multiple times in X.  
             If replace==2, with replacement everywhere.
+
+        
+        Yields
+        -----------
+        self.X : np.ndarray
+            X.shape = (nx,nt,1)
+        self.D : np.ndarray
+            D.shape = (n1,n2)
+        self.X_states : np.ndarray
+            X_states.shape= (nx,)
+            Store the subscripts of states in X. 
+            i.e. X_i has state a_{X_states[i]}
+        self.X_nuisances : np.ndarray    
+            X_nuisances.shape= (nx,nt)
+            Store the subscripts of nuisances in X. 
+            i.e. X_i[j] has nuisance b_{X_nuisances[i,j]}       
         '''
         states = np.copy(states)
         nuisances = np.copy(nuisances)
