@@ -1,1 +1,0 @@
-p=1, q=1. loop_time=2. For epoch 400, loss is 0.109712.
