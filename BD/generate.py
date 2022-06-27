@@ -1,0 +1,184 @@
+import numpy as np
+import math
+import matplotlib.pyplot as plt
+import random
+def g0(n,x):
+    return np.random.rand(1)
+class generate():
+    def __init__(self, d=100, nt=20, N=10000, sigma=0, n1=20, n2=20, obj_discrete=[], psf_discrete=[], replace=1):
+        self.d = d
+        self.nt = nt
+        self.N = N
+        self.sigma = sigma
+        self.n1 = n1
+        self.n2 = n2
+        self.obj_discrete = obj_discrete
+        self.psf_discrete = psf_discrete
+        self.replace = replace
+    def generate_default(self):
+        d = self.d
+        nt = self.nt
+        N = self.N
+        sigma = self.sigma
+        n1 = self.n1
+        n2 = self.n2
+        obj_discrete = self.obj_discrete
+        psf_discrete = self.psf_discrete
+        replace = self.replace
+        X=np.empty((N,nt,d), dtype = float, order = 'C')
+        self.X=X
+        states=np.empty(N, dtype = int)
+        self.states=states
+        nuisances=np.empty((N,n2), dtype = int, order = 'C')
+        self.nuisances=nuisances
+        waiting_samples = [list(range(n2)) for i in range(n1)]
+        self.waiting_samples=waiting_samples
+        waiting_states = list(range(n1))
+        self.waiting_states=waiting_states
+        select_times = np.zeros((n1,n2))
+        self.select_times = select_times
+        
+        if replace == 0:
+            assert N*nt<=n1*n2 and nt<=n2, 'X is larger than D'
+            for i in range(N):
+                e = np.random.choice(waiting_states)
+                states[i] = e
+                ns = np.random.choice(waiting_samples[e], replace = False, size = nt)
+                for l in ls:
+                    waiting_samples[e].remove(l)
+                if len(waiting_samples[e]) < nt:
+                    waiting_states.remove(e)
+                for j in range(nt):
+                    l = ls[j]
+                    nuisances[i,j] = l
+                    select_times[e,l] += 1
+                    X[i,j,:] = np.convolve(obj_discrete[e,:], psf_discrete[l,:], 'same')
+        if replace == 1:
+            for i in range(N):
+                e = np.random.choice(waiting_states)
+                states[i] = e
+                ls = np.random.choice(waiting_samples[e], replace=False, size=nt)
+                for j in range(nt):
+                    l = ls[j]
+                    nuisances[i,j] = l
+                    select_times[e,l] += 1
+                    X[i,j,:] = np.convolve(obj_discrete[e,:], psf_discrete[l,:], 'same')
+        if replace == 2:
+            for i in range(N):
+                e = np.random.choice(list(range(n1)))
+                states[i] = e
+                for j in range(nt):
+                    l = np.random.choice(list(range(n2)))
+                    nuisances[i,j] = l
+                    select_times[e,l] += 1
+                    X[i,j,:] = np.convolve(obj_discrete[e,:], psf_discrete[l,:], 'same')
+        return X
+        
+    """
+    def generate_random(self):
+        '''
+        Generate a Multireference Alignment (MRA) data set X. 
+        X[i,j,:] is the j-th instance of the i-th data. 
+        The value X[i,j,k] randomly samples from a uniform distribution over [0, 1).
+        X[i,j,k]~U(0,1)+noise, iid, where k=1,2...d (given 1<=i<=N and 1<=j<=nt).
+        '''
+        d=self.d;nt=self.nt;N=self.N;sigma=self.sigma;ne=self.ne;
+        X=self.X;SNR=self.SNR;thetas=self.thetas;shifts=self.shifts
+        for i in range(N):
+            thetas[i,:]=np.random.rand(d)
+            if sigma!=0:
+                SNR[i]=(np.linalg.norm(thetas[i,:],2)/sigma)**2
+            else:
+                SNR[i]=np.inf
+            for j in range(nt):
+                l=np.random.randint(d)
+                shifts[i,j]=l
+                for k in range(d):
+                    X[i,j,k]=thetas[i,(k+l)%d]+sigma*np.random.normal()
+        return X
+    def generate_trigonometric(self):
+        '''
+        Generate a Multireference Alignment (MRA) data set X using sin(nx) and cos(nx)
+        '''
+        d=self.d;nt=self.nt;N=self.N;sigma=self.sigma;ne=self.ne;states=self.states
+        X=self.X;SNR=self.SNR;thetas=self.thetas;shifts=self.shifts
+        def f(n,x):
+            return math.cos(n*x/d*2*math.pi)
+        for i in range(N):
+            e=np.random.randint(ne)
+            states[i]=e
+            thetas[i,:]=[f(e,k) for k in range(d)]
+            if sigma!=0:
+                SNR[i]=(np.linalg.norm(thetas[i,:],2)/sigma)**2
+            else:
+                SNR[i]=np.inf
+            for j in range(nt):
+                l=np.random.randint(d)
+                shifts[i,j]=l
+                for k in range(d):
+                    X[i,j,k]=thetas[i,(k+l)%d]+sigma*np.random.normal()
+        return X
+    def generate_smooth(self):
+        '''
+        Generate a Multireference Alignment (MRA) data set X. 
+        X[i,j,:] is the j-th instance of the i-th data. 
+        X[i,j,k] is "smooth" wrt k (though X[i,j,:] is discrete).
+        X[i,j,:] is generated by conbination of Sin and Cos (g(m,x) in the code).
+        '''
+        d=self.d;nt=self.nt;N=self.N;sigma=self.sigma;ne=self.ne;states=self.states
+        X=self.X;SNR=self.SNR;thetas=self.thetas;shifts=self.shifts
+        def f(n,x):
+            if n%2==0:
+                return math.cos(n/2*x/d*2*math.pi)
+            else:
+                return math.sin((n+1)/2*x/d*2*math.pi)
+        def g(n,x):
+            return sum([f(k,x)/(k+1) for k in range(n+1)])
+        for i in range(N):
+            e=np.random.randint(ne)
+            states[i]=e
+            thetas[i,:]=[g(e,k) for k in range(d)]
+            if sigma!=0:
+                SNR[i]=(np.linalg.norm(thetas[i,:],2)/sigma)**2
+            else:
+                SNR[i]=np.inf
+            for j in range(nt):
+                l=np.random.randint(d)
+                shifts[i,j]=l      
+                for k in range(d):
+                    X[i,j,k]=thetas[i,(k+l)%d]+sigma*np.random.normal()
+        return X
+
+    def generate_smooth_no_replacement(self):
+        '''
+        Generate a Multireference Alignment (MRA) data set X. 
+        X[i,j,:] is the j-th instance of the i-th data. 
+        X[i,j,k] is "smooth" wrt k (though X[i,j,:] is discrete).
+        The difference between generate_smooth_no_replacement and generate_smooth is that
+        this function guarantees the cyclic shifts related to different j's are all different, 
+        while generate_smooth does not. 
+        '''
+        d=self.d;nt=self.nt;N=self.N;sigma=self.sigma;ne=self.ne;states=self.states
+        X=self.X;SNR=self.SNR;thetas=self.thetas;shifts=self.shifts
+        def f(n,x):
+            if n%2==0:
+                return math.cos(n/2*x/d*2*math.pi)
+            else:
+                return math.sin((n+1)/2*x/d*2*math.pi)
+        def g(n,x):
+            return sum([f(k,x)/(k+1) for k in range(n+1)])
+        for i in range(N):
+            e=np.random.randint(ne)
+            states[i]=e
+            thetas[i,:]=[g(e,k) for k in range(d)]
+            if sigma!=0:
+                SNR[i]=(np.linalg.norm(thetas[i,:],2)/sigma)**2
+            else:
+                SNR[i]=np.inf
+            l=random.sample(range(d),nt)
+            for j in range(nt):
+                shifts[i,j]=l
+                for k in range(d):
+                    X[i,j,k]=thetas[i,(k+l[j])%d]+sigma*np.random.normal()
+        return X
+    """

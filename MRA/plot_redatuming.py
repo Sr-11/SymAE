@@ -41,8 +41,8 @@ def plot_redatuming(redatuming_object,p=p,q=q):
 
     axs[1,0].set(xlabel='Coherent 1')
     axs[1,1].set(xlabel='Coherent 2')
-    axs[1,0].set(ylabel='Nuisance 1 \n Shift=%d'%(redatum.MRA1.shifts[0,redatum.t]))
-    axs[0,0].set(ylabel='Nuisance 2 \n Shift=%d'%(redatum.MRA2.shifts[0,redatum.t]))
+    axs[1,0].set(ylabel='Nuisance 1 \n Shift=%d'%(redatum.MRA1.shifts[0,redatum.t1]))
+    axs[0,0].set(ylabel='Nuisance 2 \n Shift=%d'%(redatum.MRA2.shifts[0,redatum.t2]))
     for ax in axs.flat:
         ax.grid(True)
         #ax.legend()

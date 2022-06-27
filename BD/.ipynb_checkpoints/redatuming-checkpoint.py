@@ -37,9 +37,15 @@ class redatuming():
         self.C2_N2_input=MRA2.X[0,t,:]
         self.C2_N2_output=Y22[0,t,:]
         self.C1_N2_virtual=Y21[0,t,:]
-        self.C1_N2_synthetic=np.roll(MRA1.thetas[0,:],int(-MRA2.shifts[0,t]))
+        print(MRA1.states[0])
+        print(MRA2.nuisances[0,t])
+        self.C1_N2_synthetic=np.convolve(MRA1.obj_discrete[MRA1.states[0],:], 
+                                         MRA2.psf_discrete[MRA2.nuisances[0,t],:], 
+                                         'same')
         self.C2_N1_virtual=Y12[0,t,:]
-        self.C2_N1_synthetic=np.roll(MRA2.thetas[0,:],int(-MRA1.shifts[0,t]))
+        self.C2_N1_synthetic=np.convolve(MRA2.obj_discrete[MRA2.states[0],:], 
+                                         MRA1.psf_discrete[MRA1.nuisances[0,t],:], 
+                                         'same')
     def MSE(self):
         '''
         Evaluate the MSE

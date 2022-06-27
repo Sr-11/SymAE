@@ -1,7 +1,7 @@
 from parameters import *
 import numpy as np
 class redatuming():
-    def __init__(self,model,MRA1,MRA2,t,p=p,q=q):
+    def __init__(self,model,MRA1,MRA2,t1=0,t2=0,p=p,q=q):
         '''
         Parameters
         ----------
@@ -19,7 +19,8 @@ class redatuming():
         self.model=model
         self.MRA1=MRA1
         self.MRA2=MRA2
-        self.t=t
+        self.t1=t1
+        self.t2=t2
         X1=MRA1.X
         X2=MRA2.X
         coherent_1=model.sym_encoder.predict(X1)
@@ -32,14 +33,14 @@ class redatuming():
         Y12 = model.decoder.predict(merger_1_2)
         Y11=model.predict(MRA1.X)
         Y22=model.predict(MRA2.X)
-        self.C1_N1_input=MRA1.X[0,t,:]
-        self.C1_N1_output=Y11[0,t,:]
-        self.C2_N2_input=MRA2.X[0,t,:]
-        self.C2_N2_output=Y22[0,t,:]
-        self.C1_N2_virtual=Y21[0,t,:]
-        self.C1_N2_synthetic=np.roll(MRA1.thetas[0,:],int(-MRA2.shifts[0,t]))
-        self.C2_N1_virtual=Y12[0,t,:]
-        self.C2_N1_synthetic=np.roll(MRA2.thetas[0,:],int(-MRA1.shifts[0,t]))
+        self.C1_N1_input=MRA1.X[0,t1,:]
+        self.C1_N1_output=Y11[0,t1,:]
+        self.C2_N2_input=MRA2.X[0,t2,:]
+        self.C2_N2_output=Y22[0,t2,:]
+        self.C1_N2_virtual=Y21[0,t2,:]
+        self.C1_N2_synthetic=np.roll(MRA1.thetas[0,:],int(-MRA2.shifts[0,t2]))
+        self.C2_N1_virtual=Y12[0,t1,:]
+        self.C2_N1_synthetic=np.roll(MRA2.thetas[0,:],int(-MRA1.shifts[0,t1]))
     def MSE(self):
         '''
         Evaluate the MSE

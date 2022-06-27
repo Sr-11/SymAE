@@ -3,10 +3,10 @@ import tensorflow as tf
 tfk = tf.keras
 tfkl = tf.keras.layers
 tfkltd= tf.keras.layers.TimeDistributed
-
+from parameters import *
 import os 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"]="6,7"
+#os.environ["CUDA_VISIBLE_DEVICES"]="6,7"
 
 gpus = tf.config.experimental.list_physical_devices('GPU')
 print("Num GPUs Available: ", len(gpus))
@@ -121,7 +121,14 @@ class NuisanceEncoder1D(tf.keras.Model):
     self.mp4=tfkltd(tfkl.MaxPool1D(pool_size=(tdown[3])))
     self.f=tfkltd(tfkl.Flatten())
     self.d=tfkltd(tfkl.Dense(latent_dim))
-
+    
+    #self.f2=tfkl.Flatten()
+    self.bn2=tfkltd(tfkl.BatchNormalization(activity_regularizer=tf.keras.regularizers.L2(0.01)))
+    #self.bn3=tfkl.BatchNormalization()
+    
+    #self.ln1=tfkl.LayerNormalization(axis=2)
+    
+        
   def call(self, input_tensor, training=False):
     # n, ntau, nr, nt, nc = input_tensor.get_shape()
     x=self.c1(input_tensor)
@@ -140,6 +147,12 @@ class NuisanceEncoder1D(tf.keras.Model):
     x=self.mp4(x)
     x=self.f(x)
     out=self.d(x)
+    
+    #out=self.f2(out)
+    out=self.bn2(out, training=training)
+    #out=self.bn3(out, training=training)  
+    #out=tf.reshape(out, [-1, nt, q])
+    
     return out
   def model(self, x):
     return tfk.Model(inputs=x, outputs=self.call(x))
@@ -328,9 +341,9 @@ class DistributeZsym(tf.keras.Model):
 class LatentCat(tf.keras.Model):
   def __init__(self, alpha=1.0):
     super(LatentCat, self).__init__(name='')
-
-    # self.drop=tfkl.GaussianDropout(alpha)
-    self.drop=tfkl.Dropout(alpha)
+    self.drop = tf.keras.layers.GaussianNoise(alpha)
+    #self.drop = tfkl.GaussianDropout(alpha)
+    #self.drop=tfkl.Dropout(alpha)
 
   def call(self, zsym, znuisance,training=False):
     znuisance=self.drop(znuisance,training=training)

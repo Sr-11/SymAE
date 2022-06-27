@@ -1,4 +1,4 @@
-import MRA_generate as generate
+import generate as generate
 from parameters import *
 import matplotlib.pyplot as plt
 def plot_training(model,test_X):

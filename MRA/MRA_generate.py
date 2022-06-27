@@ -50,6 +50,13 @@ class MRA_generate():
         self.ne=ne
         self.g=g
         self.replace=replace
+        self.X = np.empty((N,nt,d), dtype = float, order = 'C')
+        self.states = np.empty((N), dtype = int, order = 'C')
+        self.thetas = np.empty((N,d), dtype = float, order = 'C')
+        self.shifts = np.empty((N,nt), dtype = int, order = 'C')
+        self.waiting_samples = [list(range(d)) for i in range(ne)]
+        self.waiting_states = list(range(ne))
+        self.select_times = np.zeros((ne,d))
     def generate_default(self):
         d = self.d
         nt = self.nt
@@ -58,27 +65,25 @@ class MRA_generate():
         ne = self.ne
         g = self.g
         replace = self.replace
-        X=np.empty((N,nt,d), dtype = float, order = 'C')
-        self.X=X
-        states=np.empty(N, dtype = int)
-        self.states=states
-        thetas=np.empty((N,d), dtype = float, order = 'C')
-        self.thetas=thetas
-        shifts=np.empty((N,nt), dtype = float, order = 'C')
-        self.shifts=shifts
+        X = self.X
+        states = self.states
+        thetas = self.thetas
+        shifts = self.shifts
         waiting_samples = [list(range(d)) for i in range(ne)]
-        self.waiting_samples=waiting_samples
+        self.waiting_samples = waiting_samples
         waiting_states = list(range(ne))
-        self.waiting_states=waiting_states
+        self.waiting_states = waiting_states
         select_times = np.zeros((ne,d))
         self.select_times = select_times
         if replace == 0:
-            assert N*nt<=ne*d and nt<=d, 'X is larger than D'
             for i in range(N):
+                if len(waiting_states) == 0:
+                    waiting_states = list(range(ne))
+                    waiting_samples = [list(range(d)) for i in range(ne)]
                 e=np.random.choice(waiting_states)
                 states[i]=e
                 thetas[i,:]=[g(e,k/d) for k in range(d)]
-                ls=np.random.choice(waiting_samples[e],replace=replace,size=nt)
+                ls=np.random.choice(waiting_samples[e],replace=False,size=nt)
                 for l in ls:
                     waiting_samples[e].remove(l)
                 if len(waiting_samples[e])<nt:
