@@ -76,7 +76,7 @@ class SymAE(tf.keras.Model):
         self.decoder=decoder
         
         #Build SymAE
-        self.symae=tf.keras.Model(encoder_input, decoder(encoder_output) , name='autoencoder_clone')
+        self.symae=tf.keras.Model(encoder_input, decoder(encoder_output) ,name='autoencoder_clone')
         
     def call(self, input_tensor):
         return self.symae(input_tensor)

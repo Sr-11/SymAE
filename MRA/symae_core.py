@@ -35,7 +35,7 @@ class NuisanceEncoder1D(tf.keras.Model):
     self.d=tfkltd(tfkl.Dense(latent_dim))
     
     #self.f2=tfkl.Flatten()
-    self.bn2=tfkltd(tfkl.BatchNormalization(activity_regularizer=tf.keras.regularizers.L2(0.01)))
+    self.bn2=tfkltd(tfkl.BatchNormalization(activity_regularizer=tf.keras.regularizers.L2(0.1)))
     #self.bn3=tfkl.BatchNormalization()
     
     #self.ln1=tfkl.LayerNormalization(axis=2)
@@ -61,7 +61,7 @@ class NuisanceEncoder1D(tf.keras.Model):
     out=self.d(x)
     
     #out=self.f2(out)
-    out=self.bn2(out, training=training)
+    #out=self.bn2(out, training=training)
     #out=self.bn3(out, training=training)  
     #out=tf.reshape(out, [-1, nt, q])
     

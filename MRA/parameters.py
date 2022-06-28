@@ -16,5 +16,5 @@ filters = 64 # How many filters in each convolution layer
 dropout_rate = 0.1 # GaussianDropout
 
 # Parameters related to my specific algorithm of generating MRA data
-ne = 2 # The number of states, i.e. n_epsilon in the paper
+ne = 3 # The number of states, i.e. n_epsilon in the paper
 sigma = 0.0 # The intensity of the noise, currently it is not used, always set sigma=0
