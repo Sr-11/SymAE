@@ -16,7 +16,7 @@ class NuisanceEncoder1D(tf.keras.Model):
   def __init__(self, kernel_size, filter,  fstep=[2,4,8], tdown=[1,1,2,2], latent_dim=512):
     super(NuisanceEncoder1D, self).__init__(name='')
     k1=kernel_size
-
+    
     self.c1=tfkltd(tfkl.Conv1D(filter,((k1)),padding='same',activation='elu'))
     self.c2=tfkltd(tfkl.Conv1D(filter,((k1)),padding='same',activation='elu'))
     self.mp1=tfkltd(tfkl.MaxPool1D(pool_size=(tdown[0])))
@@ -37,12 +37,20 @@ class NuisanceEncoder1D(tf.keras.Model):
     #self.f2=tfkl.Flatten()
     self.bn2=tfkltd(tfkl.BatchNormalization(activity_regularizer=tf.keras.regularizers.L2(0.1)))
     #self.bn3=tfkl.BatchNormalization()
-    
+    self.n1=tfkltd(tf.keras.layers.LayerNormalization())
     #self.ln1=tfkl.LayerNormalization(axis=2)
+    
+    self.d1 = tf.keras.layers.Dense(80, activation='elu')
+    self.d2 = tf.keras.layers.Dense(80, activation='elu')
+    self.d3 = tf.keras.layers.Dense(60, activation='elu')
+    self.d4 = tf.keras.layers.Dense(60, activation='elu')
+    self.d5 = tf.keras.layers.Dense(latent_dim, activation='elu')
+    
     
         
   def call(self, input_tensor, training=False):
     # n, ntau, nr, nt, nc = input_tensor.get_shape()
+    '''
     x=self.c1(input_tensor)
     x=self.c2(x)
     x=self.mp1(x)
@@ -59,11 +67,19 @@ class NuisanceEncoder1D(tf.keras.Model):
     x=self.mp4(x)
     x=self.f(x)
     out=self.d(x)
-    
+    '''
     #out=self.f2(out)
     #out=self.bn2(out, training=training)
     #out=self.bn3(out, training=training)  
     #out=tf.reshape(out, [-1, nt, q])
+    #norms=tf.norm(out, axis=2)
+    #norms=tf.reshape(norms, [-1, nt, 1])    
+    #out=out/norms
+    x=self.d1(x)
+    x=self.d2(x)
+    x=self.d3(x)
+    x=self.d4(x)
+    out=self.d5(x)
     
     return out
   def model(self, x):
@@ -91,6 +107,12 @@ class SymmetricEncoder1D(tf.keras.Model):
     self.f=tfkl.Flatten()
     self.d=tfkl.Dense(latent_dim)
 
+    self.d1 = tf.keras.layers.Dense(80, activation='elu')
+    self.d2 = tf.keras.layers.Dense(80, activation='elu')
+    self.d3 = tf.keras.layers.Dense(60, activation='elu')
+    self.d4 = tf.keras.layers.Dense(60, activation='elu')
+    self.d5 = tf.keras.layers.Dense(latent_dim, activation='elu')
+    
   def call(self, input_tensor, training=False):
     # n, ntau, nr, nt, nc = input_tensor.get_shape()
     x=self.c11(input_tensor)

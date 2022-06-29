@@ -1,2 +1,2 @@
-model_checkpoint_path: "June28"
-all_model_checkpoint_paths: "June28"
+model_checkpoint_path: "p=30,q=20,dense,ne=50"
+all_model_checkpoint_paths: "p=30,q=20,dense,ne=50"

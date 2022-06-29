@@ -64,7 +64,9 @@ class NuisanceEncoder1D(tf.keras.Model):
     #out=self.bn2(out, training=training)
     #out=self.bn3(out, training=training)  
     #out=tf.reshape(out, [-1, nt, q])
-    
+    norms=tf.norm(out, axis=2)
+    norms=tf.reshape(norms, [-1, nt, 1])    
+    out=out/norms
     return out
   def model(self, x):
     return tfk.Model(inputs=x, outputs=self.call(x))
@@ -139,9 +141,9 @@ class DistributeZsym(tf.keras.Model):
 class LatentCat(tf.keras.Model):
   def __init__(self, alpha=1.0):
     super(LatentCat, self).__init__(name='')
-    #self.drop = tf.keras.layers.GaussianNoise(alpha)
+    self.drop = tf.keras.layers.GaussianNoise(alpha)
     #self.drop = tfkl.GaussianDropout(alpha)
-    self.drop=tfkl.Dropout(alpha)
+    #self.drop=tfkl.Dropout(alpha)
 
   def call(self, zsym, znuisance,training=False):
     znuisance=self.drop(znuisance,training=training)

@@ -7,14 +7,14 @@ d = 100 # d is the dimensions of image.
 
 
 # Parameters related to SymAE
-p = 3 # Dimensions of the coherent latent space
-q = 2 # Dimensions of the nuisant latent space
+p = 30 # Dimensions of the coherent latent space
+q = 20 # Dimensions of the nuisant latent space
 
 # Parameters related to NeuralNets
 kernel_size = 5 # How to convolute, the size of the kernel
 filters = 64 # How many filters in each convolution layer
-dropout_rate = 0.1 # GaussianDropout
+dropout_rate = 0.5 # GaussianDropout
 
 # Parameters related to my specific algorithm of generating MRA data
-ne = 3 # The number of states, i.e. n_epsilon in the paper
+ne = 50 # The number of states, i.e. n_epsilon in the paper
 sigma = 0.0 # The intensity of the noise, currently it is not used, always set sigma=0
