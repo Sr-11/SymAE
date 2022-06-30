@@ -1,0 +1,57 @@
+from parameters import *
+import numpy as np
+class redatuming():
+    def __init__(self,model,MRA1,MRA2,t,p=p,q=q):
+        '''
+        Parameters
+        ----------
+        model : SymAE defined in symae_model.py
+        MRA1 : MRA_generate defined in MRA_generate.py
+        MRA2 : MRA_generate defined in MRA_generate.py
+        t : int
+        p : int
+        q : int
+        
+        Yields
+        ----------
+        All 8 self.C1/2_N1/2_input/output/virtual/synthetic correspond to 8 lines in the plot
+        '''
+        self.model=model
+        self.MRA1=MRA1
+        self.MRA2=MRA2
+        self.t=t
+        X1=MRA1.X
+        X2=MRA2.X
+        coherent_1=model.sym_encoder.predict(X1)
+        coherent_2=model.sym_encoder.predict(X2)
+        nuisance_1=model.nui_encoder.predict(X1)
+        nuisance_2=model.nui_encoder.predict(X2)
+        merger_2_1 = model.latentcat(coherent_1,nuisance_2)
+        merger_1_2 = model.latentcat(coherent_2,nuisance_1)
+        Y21 = model.decoder.predict(merger_2_1)
+        Y12 = model.decoder.predict(merger_1_2)
+        Y11=model.predict(MRA1.X)
+        Y22=model.predict(MRA2.X)
+        self.C1_N1_input=MRA1.X[0,t,:]
+        self.C1_N1_output=Y11[0,t,:]
+        self.C2_N2_input=MRA2.X[0,t,:]
+        self.C2_N2_output=Y22[0,t,:]
+        self.C1_N2_virtual=Y21[0,t,:]
+        print(MRA1.states[0])
+        print(MRA2.nuisances[0,t])
+        self.C1_N2_synthetic=np.convolve(MRA1.obj_discrete[MRA1.states[0],:], 
+                                         MRA2.psf_discrete[MRA2.nuisances[0,t],:], 
+                                         'same')
+        self.C2_N1_virtual=Y12[0,t,:]
+        self.C2_N1_synthetic=np.convolve(MRA2.obj_discrete[MRA2.states[0],:], 
+                                         MRA1.psf_discrete[MRA1.nuisances[0,t],:], 
+                                         'same')
+    def MSE(self):
+        '''
+        Evaluate the MSE
+        '''
+        self.MSE_C1_N2=np.mean((self.C1_N2_virtual-self.C1_N2_synthetic)**2)
+        self.MSE_C2_N1=np.mean((self.C2_N1_virtual-self.C2_N1_synthetic)**2)
+        return self.MSE_C1_N2,self.MSE_C2_N1
+        
+    

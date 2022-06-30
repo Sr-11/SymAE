@@ -1,7 +1,7 @@
 # This .py file defines most of the parameters used everywhere
 
 # Parameters related to data itself
-N = 10000 # N is the Cardinality of the data set X, i.e. n_X in the paper
+N = 1000 # N is the Cardinality of the data set X, i.e. n_X in the paper
 nt = 20 # nt is the number of instances in each X_i, i.e. n_tau in the paper (Xi[1]...Xi[nt])
 d = 100 # d is the dimensions of image.
 
@@ -16,5 +16,5 @@ filters = 64 # How many filters in each convolution layer
 dropout_rate = 0.5 # GaussianDropout
 
 # Parameters related to my specific algorithm of generating MRA data
-ne = 30 # The number of states, i.e. n_epsilon in the paper
+ne = 80 # The number of states, i.e. n_epsilon in the paper
 sigma = 0.0 # The intensity of the noise, currently it is not used, always set sigma=0

@@ -1,2 +1,2 @@
-model_checkpoint_path: "p=3,q=40,ber,ne=50\357\274\21429"
-all_model_checkpoint_paths: "p=3,q=40,ber,ne=50\357\274\21429"
+model_checkpoint_path: "p=3,q=40,ber,ne=30,30"
+all_model_checkpoint_paths: "p=3,q=40,ber,ne=30,30"
