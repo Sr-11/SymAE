@@ -339,9 +339,9 @@ class LatentCat(tf.keras.Model):
   def __init__(self, alpha=1.0):
     super(LatentCat, self).__init__(name='')
 
-    #self.drop=tfkl.GaussianNoise(alpha)
+    self.drop=tfkl.GaussianNoise(alpha)
     # self.drop=tfkl.GaussianDropout(alpha)
-    self.drop=tfkl.Dropout(alpha)
+    #self.drop=tfkl.Dropout(alpha)
 
   def call(self, zsym, znuisance,training=False):
     znuisance=self.drop(znuisance,training=training)
