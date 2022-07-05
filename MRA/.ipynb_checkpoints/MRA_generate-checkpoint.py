@@ -42,7 +42,7 @@ class MRA_generate():
         shifts[i,t] denotes the shift of X_i[t].
 
     '''
-    def __init__(self,d=100,nt=20,N=10000,sigma=0,ne=20,g=g0,replace=1):
+    def __init__(self,d=100,nt=20,N=10000,sigma=0,ne=20,g=g0,replace=1, continuous=False):
         self.d=d
         self.nt=nt
         self.N=N
@@ -57,6 +57,7 @@ class MRA_generate():
         self.waiting_samples = [list(range(d)) for i in range(ne)]
         self.waiting_states = list(range(ne))
         self.select_times = np.zeros((ne,d))
+        self.continuous = continuous
     def generate_default(self):
         d = self.d
         nt = self.nt
@@ -75,49 +76,63 @@ class MRA_generate():
         self.waiting_states = waiting_states
         select_times = np.zeros((ne,d))
         self.select_times = select_times
-        if replace == 0:
-            for i in range(N):
-                if len(waiting_states) == 0:
-                    waiting_states = list(range(ne))
-                    waiting_samples = [list(range(d)) for i in range(ne)]
-                e=np.random.choice(waiting_states)
-                states[i]=e
-                thetas[i,:]=[g(e,k/d) for k in range(d)]
-                ls=np.random.choice(waiting_samples[e],replace=False,size=nt)
-                for l in ls:
-                    waiting_samples[e].remove(l)
-                if len(waiting_samples[e])<nt:
-                    waiting_states.remove(e)
-                for j in range(nt):
-                    l=ls[j]
-                    shifts[i,j]=l
-                    select_times[e,l] += 1
-                    for k in range(d):
-                        X[i,j,k]=thetas[i,(k+l)%d]+sigma*np.random.normal()
-        if replace == 1:
+        if self.continuous == True:
+            self.shifts = np.empty((N,nt), dtype = float, order = 'C')
             for i in range(N):
                 e=np.random.choice(waiting_states)
                 states[i]=e
-                thetas[i,:]=[g(e,k/d) for k in range(d)]
-                ls=np.random.choice(waiting_samples[e],replace=False,size=nt)
+                ls=np.random.uniform(0, d, nt)
                 for j in range(nt):
                     l=ls[j]
-                    shifts[i,j]=l
-                    select_times[e,l] += 1
+                    self.shifts[i,j]=l
+                    select_times[e,int(l)] += 1
                     for k in range(d):
-                        X[i,j,k]=thetas[i,(k+l)%d]+sigma*np.random.normal()
-        if replace == 2:
-            for i in range(N):
-                e=np.random.choice(waiting_states)
-                states[i]=e
-                thetas[i,:]=[g(e,k/d) for k in range(d)]
-                ls=np.random.choice(waiting_samples[e],replace=True,size=nt)
-                for j in range(nt):
-                    l=ls[j]
-                    shifts[i,j]=l
-                    select_times[e,l] += 1
-                    for k in range(d):
-                        X[i,j,k]=thetas[i,(k+l)%d]+sigma*np.random.normal()
+                        X[i,j,k]=g(e,(k+l)/d)+sigma*np.random.normal()
+            
+        elif self.continuous == False:
+            if replace == 0:
+                for i in range(N):
+                    if len(waiting_states) == 0:
+                        waiting_states = list(range(ne))
+                        waiting_samples = [list(range(d)) for i in range(ne)]
+                    e=np.random.choice(waiting_states)
+                    states[i]=e
+                    thetas[i,:]=[g(e,k/d) for k in range(d)]
+                    ls=np.random.choice(waiting_samples[e],replace=False,size=nt)
+                    for l in ls:
+                        waiting_samples[e].remove(l)
+                    if len(waiting_samples[e])<nt:
+                        waiting_states.remove(e)
+                    for j in range(nt):
+                        l=ls[j]
+                        shifts[i,j]=l
+                        select_times[e,l] += 1
+                        for k in range(d):
+                            X[i,j,k]=thetas[i,(k+l)%d]+sigma*np.random.normal()
+            if replace == 1:
+                for i in range(N):
+                    e=np.random.choice(waiting_states)
+                    states[i]=e
+                    thetas[i,:]=[g(e,k/d) for k in range(d)]
+                    ls=np.random.choice(waiting_samples[e],replace=False,size=nt)
+                    for j in range(nt):
+                        l=ls[j]
+                        shifts[i,j]=l
+                        select_times[e,l] += 1
+                        for k in range(d):
+                            X[i,j,k]=thetas[i,(k+l)%d]+sigma*np.random.normal()
+            if replace == 2:
+                for i in range(N):
+                    e=np.random.choice(waiting_states)
+                    states[i]=e
+                    thetas[i,:]=[g(e,k/d) for k in range(d)]
+                    ls=np.random.choice(waiting_samples[e],replace=True,size=nt)
+                    for j in range(nt):
+                        l=ls[j]
+                        shifts[i,j]=l
+                        select_times[e,l] += 1
+                        for k in range(d):
+                            X[i,j,k]=thetas[i,(k+l)%d]+sigma*np.random.normal()
         return X
         
     """
