@@ -1,2 +1,0 @@
-model_checkpoint_path: "p=10,q=10,ber,ne=50,30"
-all_model_checkpoint_paths: "p=10,q=10,ber,ne=50,30"

@@ -1,0 +1,2 @@
+model_checkpoint_path: "p=100,q=3,predata"
+all_model_checkpoint_paths: "p=100,q=3,predata"

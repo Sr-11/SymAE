@@ -51,9 +51,9 @@ class MRA_generate():
         self.ne=ne
         self.g=g
         self.replace=replace
-        self.X = np.empty((N,nt,d), dtype = float, order = 'C')
+        self.X = np.empty((N,nt,d), dtype = np.float32, order = 'C')
         self.states = np.empty((N), dtype = int, order = 'C')
-        self.thetas = np.empty((N,d), dtype = float, order = 'C')
+        self.thetas = np.empty((N,d), dtype = np.float32, order = 'C')
         self.shifts = np.empty((N,nt), dtype = int, order = 'C')
         self.waiting_samples = [list(range(d)) for i in range(ne)]
         self.waiting_states = list(range(ne))
@@ -78,7 +78,7 @@ class MRA_generate():
         select_times = np.zeros((ne,d))
         self.select_times = select_times
         if self.continuous == True:
-            self.shifts = np.empty((N,nt), dtype = float, order = 'C')
+            self.shifts = np.empty((N,nt), dtype = np.float32, order = 'C')
             for i in trange(N):
                 e=np.random.choice(waiting_states)
                 states[i]=e
@@ -88,7 +88,7 @@ class MRA_generate():
                     self.shifts[i,j]=l
                     select_times[e,int(l)] += 1
                     for k in range(d):
-                        X[i,j,k]=g(e,(k+l)/d)+sigma*np.random.normal()
+                        X[i,j,k]=g(e,(k+l)%d/d)+sigma*np.random.normal()
             
         elif self.continuous == False:
             if replace == 0:
