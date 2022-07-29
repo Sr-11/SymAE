@@ -7,7 +7,7 @@ d = 100 # d is the dimensions of image.
 
 
 # Parameters related to SymAE
-p = 30 # Dimensions of the coherent latent space
+p = 3 # Dimensions of the coherent latent space
 q = 3 # Dimensions of the nuisant latent space
 
 # Parameters related to NeuralNets

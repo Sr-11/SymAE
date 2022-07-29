@@ -234,7 +234,6 @@ class SymmetricEncoder1D(tf.keras.Model):
     self.c14=tfkltd(tfkl.Conv1D(filters//fstep[2],(k1),padding='same',activation='elu'))
     self.mp12=tfkltd(tfkl.MaxPool1D(pool_size=(tdown[1])))
 
-
     self.c21=tfkl.Conv1D(filters,(k1),padding='same',activation='elu')
     self.c22=tfkl.Conv1D(filters//fstep[0],(k1),padding='same',activation='elu')
     self.mp21=tfkl.MaxPool1D(pool_size=(tdown[2]))
