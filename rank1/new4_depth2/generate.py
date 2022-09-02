@@ -45,8 +45,9 @@ class generate():
         X = np.empty((nx,nt,1))
         X_states = np.empty(nx, dtype='int')
         X_nuisances = np.empty((nx,nt), dtype='int')
-        D = states[:,np.newaxis]+nuisances[np.newaxis,:]
+        #D = states[:,np.newaxis]+nuisances[np.newaxis,:]
         D = np.tensordot(states,nuisances,0)
+        self.D = D
         waiting_samples = [list(range(n2)) for i in range(n1)]
         waiting_states = list(range(n1))
         selected_times = np.zeros((n1,n2), dtype='int')

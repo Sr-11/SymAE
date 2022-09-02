@@ -103,7 +103,7 @@ class NuisanceEncoder(tf.keras.Model):
 
 
 class NuisanceEncoder1D(tf.keras.Model):
-  def __init__(self, kernel_size, filter,  fstep=[2,4,8], tdown=[1,1,2,2], latent_dim=512):
+  def __init__(self, kernel_size, filter, fstep=[2,4,8], tdown=[1,1,2,2], latent_dim=512):
     super(NuisanceEncoder1D, self).__init__(name='')
     k1=kernel_size
 

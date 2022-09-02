@@ -1,0 +1,2 @@
+model_checkpoint_path: "p=5,q=10,ne=6"
+all_model_checkpoint_paths: "p=5,q=10,ne=6"
