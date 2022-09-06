@@ -116,13 +116,13 @@ class Mixer1D(tf.keras.Model):
     # self.c5=tfkltd(tfkl.Conv1D(64, 5, padding='same',activation='elu'))
     # self.c6=tfkltd(tfkl.Conv1D(1, 5, padding='same'))
     
-    self.d1=tfkltd(tfkl.Dense(1000))
-    self.d2=tfkltd(tfkl.Dense(1000))
-    self.d3=tfkltd(tfkl.Dense(2000))
-    self.d4=tfkltd(tfkl.Dense(3000))
-    self.d5=tfkltd(tfkl.Dense(2000))
-    self.d6=tfkltd(tfkl.Dense(1000))
-    self.d7=tfkltd(tfkl.Dense(1000))
+    self.d1=tfkltd(tfkl.Dense(100,activation='elu'))
+    self.d2=tfkltd(tfkl.Dense(5000,activation='elu'))
+    self.d3=tfkltd(tfkl.Dense(5000,activation='elu'))
+    self.d4=tfkltd(tfkl.Dense(5000,activation='elu'))
+    self.d5=tfkltd(tfkl.Dense(5000,activation='elu'))
+    self.d6=tfkltd(tfkl.Dense(5000,activation='elu'))
+    self.d7=tfkltd(tfkl.Dense(5000,activation='elu'))
     self.d8=tfkltd(tfkl.Dense(100))
     
   def call(self, x, training=False):
