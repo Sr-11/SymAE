@@ -86,9 +86,68 @@ class SymmetricEncoder1D(tf.keras.Model):
 class DecDense(tf.keras.Model):
   def __init__(self):
     super(DecDense, self).__init__(name = 'DecDense')
+    self.d1=tfkltd(tfkl.Dense(50, activation='elu'))
+    self.r2=tfkltd(tfkl.Reshape(target_shape=(50,1)))
+    self.c1=tfkltd(tfkl.Conv1D(32,5,padding='same',activation='elu'))
+    self.us1=tfkltd(tfkl.UpSampling1D(size=2))
+    self.c2=tfkltd(tfkl.Conv1D(32,5,padding='same',activation='elu'))
+    self.c3=tfkltd(tfkl.Conv1D(32,5,padding='same'))
+    self.bn=tfkltd(tfkl.BatchNormalization())
+    self.a=tfkltd(tfkl.Activation('elu'))
+    self.c4=tfkltd(tfkl.Conv1D(32,5,padding='same',activation='elu'))
+    self.c5=tfkltd(tfkl.Conv1D(32,5,padding='same',activation='elu'))
+    self.c6=tfkltd(tfkl.Conv1D(1,5,padding='same'))
+
+  def call(self, x, training=False):
+    x=x[:,:,:,0]
+    x=self.d1(x)
+    x=self.r2(x)
+    x=self.c1(x)
+    x=self.us1(x)
+    x=self.c2(x)
+    x=self.c3(x)
+    x=self.bn(x, training=training)
+    x=self.a(x)
+    x=self.c4(x)
+    x=self.c5(x)
+    x=self.c6(x)
+    return x
+
+class DecDense1(tf.keras.Model):
+  def __init__(self):
+    super(DecDense1, self).__init__(name = 'DecDense1')
+    self.d1=tfkltd(tfkl.Dense(50, activation='elu'))
+    self.r2=tfkltd(tfkl.Reshape(target_shape=(50,1)))
+    self.c1=tfkltd(tfkl.Conv1D(32,5,padding='same',activation='elu'))
+    self.us1=tfkltd(tfkl.UpSampling1D(size=2))
+    self.c2=tfkltd(tfkl.Conv1D(32,5,padding='same',activation='elu'))
+    self.c3=tfkltd(tfkl.Conv1D(32,5,padding='same'))
+    self.bn=tfkltd(tfkl.BatchNormalization())
+    self.a=tfkltd(tfkl.Activation('elu'))
+    self.c4=tfkltd(tfkl.Conv1D(32,5,padding='same',activation='elu'))
+    self.c5=tfkltd(tfkl.Conv1D(32,5,padding='same',activation='elu'))
+    self.c6=tfkltd(tfkl.Conv1D(1,5,padding='same'))
+
+  def call(self, x, training=False):
+    x=self.d1(x)
+    x=self.r2(x)
+    x=self.c1(x)
+    x=self.us1(x)
+    x=self.c2(x)
+    x=self.c3(x)
+    x=self.bn(x, training=training)
+    x=self.a(x)
+    x=self.c4(x)
+    x=self.c5(x)
+    x=self.c6(x)
+    return x
+
+class DecDense2(tf.keras.Model):
+  def __init__(self):
+    super(DecDense2, self).__init__(name = 'DecDense2')
     self.d1=tfkltd(tfkl.Dense(2000))
     self.d2=tfkltd(tfkl.Dense(2000))
-    self.d3=tfkltd(tfkl.Dense(2000))
+    self.d3=tfkltd(tfkl.Dense(500))
     self.d4=tfkltd(tfkl.Dense(100))
     
   def call(self, x, training=False):
@@ -97,36 +156,7 @@ class DecDense(tf.keras.Model):
     x=self.d3(x)
     x=self.d4(x)
     x=tf.expand_dims(x,-1)
-    return x
 
-class DecDense1(tf.keras.Model):
-  def __init__(self):
-    super(DecDense1, self).__init__(name = 'DecDense1')
-    self.d1=tfkltd(tfkl.Dense(2000))
-    self.d2=tfkltd(tfkl.Dense(2000))
-    self.d3=tfkltd(tfkl.Dense(200))
-    self.d4=tfkltd(tfkl.Dense(10))
-    
-  def call(self, x, training=False):
-    x=self.d1(x)
-    x=self.d2(x)
-    x=self.d3(x)
-    x=self.d4(x)
-    return x
-
-class DecDense2(tf.keras.Model):
-  def __init__(self):
-    super(DecDense2, self).__init__(name = 'DecDense2')
-    self.d1=tfkltd(tfkl.Dense(2000))
-    self.d2=tfkltd(tfkl.Dense(2000))
-    self.d3=tfkltd(tfkl.Dense(200))
-    self.d4=tfkltd(tfkl.Dense(10))
-    
-  def call(self, x, training=False):
-    x=self.d1(x)
-    x=self.d2(x)
-    x=self.d3(x)
-    x=self.d4(x)
     return x
 
 
