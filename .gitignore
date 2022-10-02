@@ -2,3 +2,8 @@ not_using/
 MRA/pq_checkpoint/
 MRA/backups_not_using/
 MRA/Dense/checkpoint/
+MRA/new_decoder
+seismic pawan/train_data.h5
+seismicTL_circular2.h5
+BD/
+rank1/
