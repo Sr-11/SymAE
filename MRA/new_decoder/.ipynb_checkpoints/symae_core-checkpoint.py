@@ -117,7 +117,7 @@ class DecDense1(tf.keras.Model):
   def __init__(self):
     super(DecDense1, self).__init__(name = 'DecDense1')
     self.d1=tfkltd(tfkl.Dense(50, activation='elu'))
-    self.r2=tfkltd(tfkl.Reshape(target_shape=(5,1)))
+    self.r2=tfkltd(tfkl.Reshape(target_shape=(50,1)))
     self.c1=tfkltd(tfkl.Conv1D(32,5,padding='same',activation='elu'))
     self.us1=tfkltd(tfkl.UpSampling1D(size=2))
     self.c2=tfkltd(tfkl.Conv1D(32,5,padding='same',activation='elu'))
@@ -130,8 +130,11 @@ class DecDense1(tf.keras.Model):
 
   def call(self, x, training=False):
     x=self.d1(x)
+    #print(x.shape)
     x=self.r2(x)
+    #print(x.shape)
     x=self.c1(x)
+    #print(x.shape)
     x=self.us1(x)
     x=self.c2(x)
     x=self.c3(x)
